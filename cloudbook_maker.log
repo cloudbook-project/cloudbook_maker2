@@ -1,0 +1,241 @@
+Cloudbbok Maker started:
+=======================================
+Starting time 25-02-2020 13:20:46
+Config_dict created, ready for start the maker process.
+Config_dict (relevant info):
+	input_dir:              	C:\Users\jramosdi\cloudbook\boincffmpeg\original
+	output_dir:             	C:\Users\jramosdi\cloudbook\boincffmpeg\distributed\du_files
+	num_dus:                	4
+	non-reliable_agent_mode:	True
+Init complete
+=======================================
+	>>>Enter in graph builder
+		>>>Enter in file_scanner...
+		Program files:
+			./ ==> ['boinc_ffmpeg2.py']
+		>>>Exit from file_scanner...
+
+		>>>Enter in get_program_info
+			>>>Auxiliar function to get filenames
+				Filenames: ['C:\\Users\\jramosdi\\cloudbook\\boincffmpeg\\original\\\\boinc_ffmpeg2.py']
+			<<<Exit from get files
+			Searching in C:\Users\jramosdi\cloudbook\boincffmpeg\original\\boinc_ffmpeg2.py for classes and functions
+			Clean file name: boinc_ffmpeg2
+		Function_list: ['boinc_ffmpeg2.main', 'boinc_ffmpeg2.du0_print', 'boinc_ffmpeg2.parallel_do_task', 'boinc_ffmpeg2.du0_concat_files', 'boinc_ffmpeg2.du0_interactive_run', 'boinc_ffmpeg2.du0_interactive_filename', 'boinc_ffmpeg2.du0_main_boinc_menu']
+		Class_list: []
+		>>>Exit from get functions
+
+		>>>Enter in get pragmas
+			Pragmas added to the index
+		<<<Exit from get pragmas
+		>>>Enter in get globals
+			Global var pragmas applied
+		>>>Exit from get globals
+		>>>Enter in get function list
+			Global vars added to function list
+		<<<Exit from get function list
+
+	Graph Builder Results:
+	======================
+	Program files:	{'./': ['boinc_ffmpeg2.py']}
+	Function list:	['boinc_ffmpeg2.main', 'boinc_ffmpeg2.du0_print', 'boinc_ffmpeg2.parallel_do_task', 'boinc_ffmpeg2.du0_concat_files', 'boinc_ffmpeg2.du0_interactive_run', 'boinc_ffmpeg2.du0_interactive_filename', 'boinc_ffmpeg2.du0_main_boinc_menu', 'boinc_ffmpeg2.number_of_agents', 'boinc_ffmpeg2.filename', 'boinc_ffmpeg2.ffcom', 'boinc_ffmpeg2.time_portion', 'boinc_ffmpeg2.extension']
+	Class list:   	None
+	Pragmas:      	{'du0_functions': ['boinc_ffmpeg2.du0_print', 'boinc_ffmpeg2.du0_concat_files', 'boinc_ffmpeg2.du0_interactive_run', 'boinc_ffmpeg2.du0_interactive_filename', 'boinc_ffmpeg2.du0_main_boinc_menu'], 'parallel': ['boinc_ffmpeg2.parallel_do_task'], 'recursive': [], 'local': [], 'nonblocking_def': [], 'main': 'boinc_ffmpeg2.main'}
+	Global_vars  :	{'global': ['number_of_agents', 'filename', 'ffcom', 'time_portion', 'extension'], 'nonshared': [], 'const': [], 'safe': []}
+	Imports      :	{'boinc_ffmpeg2': [{'type': 'import', 'name': 'sys', 'alias': None}, {'type': 'import', 'name': 'time', 'alias': None}, {'type': 'import', 'name': 'random', 'alias': None}, {'type': 'import', 'name': 'os', 'alias': None}, {'type': 'import', 'name': 'subprocess', 'alias': None}, {'type': 'fromimport', 'name': 'datetime', 'alias': None, 'module': 'datetime', 'level': 0}]}
+	Program_index:
+	In file: boinc_ffmpeg2
+		13:	[{'type': 'import', 'name': 'sys', 'alias': None}]
+		14:	[{'type': 'import', 'name': 'time', 'alias': None}]
+		15:	[{'type': 'import', 'name': 'random', 'alias': None}]
+		16:	[{'type': 'import', 'name': 'os', 'alias': None}]
+		17:	[{'type': 'import', 'name': 'subprocess', 'alias': None}]
+		19:	[{'type': 'fromimport', 'name': 'datetime', 'alias': None, 'module': 'datetime', 'level': 0}]
+		21:	[{'type': 'GLOBAL', 'value': '#__CLOUDBOOK:GLOBAL__'}]
+		22:	[{'type': 'global', 'name': 'number_of_agents', 'value': '0'}]
+		23:	[{'type': 'global', 'name': 'filename', 'value': "'videos/friends.mp4'"}]
+		24:	[{'type': 'global', 'name': 'ffcom', 'value': "'-vfhflip'"}]
+		25:	[{'type': 'global', 'name': 'time_portion', 'value': '0'}]
+		26:	[{'type': 'global', 'name': 'extension', 'value': "'mp4'"}]
+		30:	[{'type': 'MAIN', 'value': '#__CLOUDBOOK:MAIN__'}]
+		31:	[{'type': 'function', 'name': 'main'}]
+		54:	[{'type': 'DU0_FUNCTION', 'value': '#__CLOUDBOOK:DU0__'}]
+		55:	[{'type': 'function', 'name': 'du0_print'}]
+		59:	[{'type': 'PARALLEL', 'value': '#__CLOUDBOOK:PARALLEL__'}]
+		60:	[{'type': 'function', 'name': 'parallel_do_task'}]
+		74:	[{'type': 'DU0_FUNCTION', 'value': '#__CLOUDBOOK:DU0__'}]
+		75:	[{'type': 'function', 'name': 'du0_concat_files'}]
+		82:	[{'type': 'DU0_FUNCTION', 'value': '#__CLOUDBOOK:DU0__'}]
+		83:	[{'type': 'function', 'name': 'du0_interactive_run'}]
+		97:	[{'type': 'SYNC', 'value': '#__CLOUDBOOK:SYNC__', 'offset': 1}]
+		110:	[{'type': 'DU0_FUNCTION', 'value': '#__CLOUDBOOK:DU0__'}]
+		111:	[{'type': 'function', 'name': 'du0_interactive_filename'}]
+		158:	[{'type': 'DU0_FUNCTION', 'value': '#__CLOUDBOOK:DU0__'}]
+		159:	[{'type': 'function', 'name': 'du0_main_boinc_menu'}]
+		183:	[{'type': 'MAIN_LINE', 'value': 'main'}]
+	<<<Exit from graph builder
+	=======================================
+
+	>>>Enter in graph filler
+		>>>Enter in get_invocations
+			The invocation scanner for file: boinc_ffmpeg2.main is:	[{'type': 'global', 'name': 'boinc_ffmpeg2.number_of_agents', 'line': 32, 'offset': 1, 'value': 1}, {'type': 'loop', 'line': 44, 'offset': 1}, {'type': 'global', 'name': 'boinc_ffmpeg2.number_of_agents', 'line': 47, 'offset': 1, 'value': 1}, {'type': 'fun', 'name': 'boinc_ffmpeg2.du0_main_boinc_menu', 'line': 49, 'offset': 1, 'value': 1}]
+			The invocation scanner for file: boinc_ffmpeg2.du0_print is:	[]
+			The invocation scanner for file: boinc_ffmpeg2.parallel_do_task is:	[{'type': 'fun', 'name': 'boinc_ffmpeg2.du0_print', 'line': 62, 'offset': 1, 'value': 1}, {'type': 'global', 'name': 'boinc_ffmpeg2.filename', 'line': 64, 'offset': 1, 'value': 1}, {'type': 'global', 'name': 'boinc_ffmpeg2.ffcom', 'line': 65, 'offset': 1, 'value': 1}, {'type': 'global', 'name': 'boinc_ffmpeg2.extension', 'line': 66, 'offset': 1, 'value': 1}]
+			The invocation scanner for file: boinc_ffmpeg2.du0_concat_files is:	[{'type': 'global', 'name': 'boinc_ffmpeg2.extension', 'line': 76, 'offset': 1, 'value': 1}]
+			The invocation scanner for file: boinc_ffmpeg2.du0_interactive_run is:	[{'type': 'global', 'name': 'boinc_ffmpeg2.number_of_agents', 'line': 84, 'offset': 1, 'value': 1}, {'type': 'global', 'name': 'boinc_ffmpeg2.time_portion', 'line': 85, 'offset': 1, 'value': 1}, {'type': 'loop', 'line': 92, 'offset': 1}, {'type': 'fun', 'name': 'boinc_ffmpeg2.parallel_do_task', 'line': 93, 'offset': 2, 'value': 1}, {'type': 'fun', 'name': 'boinc_ffmpeg2.du0_concat_files', 'line': 101, 'offset': 1, 'value': 1}]
+			The invocation scanner for file: boinc_ffmpeg2.du0_interactive_filename is:	[{'type': 'global', 'name': 'boinc_ffmpeg2.filename', 'line': 112, 'offset': 1, 'value': 1}, {'type': 'global', 'name': 'boinc_ffmpeg2.ffcom', 'line': 113, 'offset': 1, 'value': 1}, {'type': 'global', 'name': 'boinc_ffmpeg2.extension', 'line': 114, 'offset': 1, 'value': 1}, {'type': 'global', 'name': 'boinc_ffmpeg2.filename', 'line': 116, 'offset': 1, 'value': 1}, {'type': 'global', 'name': 'boinc_ffmpeg2.filename', 'line': 118, 'offset': 2, 'value': 1}, {'type': 'global', 'name': 'boinc_ffmpeg2.extension', 'line': 121, 'offset': 1, 'value': 1}, {'type': 'global', 'name': 'boinc_ffmpeg2.extension', 'line': 123, 'offset': 2, 'value': 1}, {'type': 'global', 'name': 'boinc_ffmpeg2.number_of_agents', 'line': 127, 'offset': 1, 'value': 1}, {'type': 'global', 'name': 'boinc_ffmpeg2.time_portion', 'line': 136, 'offset': 1, 'value': 1}, {'type': 'global', 'name': 'boinc_ffmpeg2.time_portion', 'line': 137, 'offset': 1, 'value': 1}, {'type': 'loop', 'line': 144, 'offset': 1}, {'type': 'global', 'name': 'boinc_ffmpeg2.ffcom', 'line': 149, 'offset': 1, 'value': 1}, {'type': 'global', 'name': 'boinc_ffmpeg2.ffcom', 'line': 151, 'offset': 2, 'value': 1}, {'type': 'global', 'name': 'boinc_ffmpeg2.ffcom', 'line': 153, 'offset': 2, 'value': 1}]
+			The invocation scanner for file: boinc_ffmpeg2.du0_main_boinc_menu is:	[{'type': 'loop', 'line': 161, 'offset': 1}, {'type': 'fun', 'name': 'boinc_ffmpeg2.du0_interactive_run', 'line': 175, 'offset': 3, 'value': 1}, {'type': 'fun', 'name': 'boinc_ffmpeg2.du0_interactive_filename', 'line': 177, 'offset': 3, 'value': 1}]
+		>>>Enter in clean matrix
+		<<<Exit from clean matrix
+	Graph Filler Results:
+	======================
+	Clean matrix:
+Matrix                                	boinc_ffmpeg2.main	boinc_ffmpeg2.du0_print	boinc_ffmpeg2.parallel_do_task	boinc_ffmpeg2.du0_concat_files	boinc_ffmpeg2.du0_interactive_run	boinc_ffmpeg2.du0_interactive_filename	boinc_ffmpeg2.du0_main_boinc_menu	boinc_ffmpeg2.number_of_agents	boinc_ffmpeg2.filename	boinc_ffmpeg2.ffcom	boinc_ffmpeg2.time_portion	boinc_ffmpeg2.extension
+boinc_ffmpeg2.main                    	0                 	0                      	0                             	0                             	0                                	0                                     	0                                	0                             	0                     	0                  	0                         	0                      
+boinc_ffmpeg2.du0_print               	0                 	0                      	1                             	0                             	0                                	0                                     	0                                	0                             	0                     	0                  	0                         	0                      
+boinc_ffmpeg2.parallel_do_task        	0                 	0                      	0                             	0                             	100                              	0                                     	0                                	0                             	0                     	0                  	0                         	0                      
+boinc_ffmpeg2.du0_concat_files        	0                 	0                      	0                             	0                             	1                                	0                                     	0                                	0                             	0                     	0                  	0                         	0                      
+boinc_ffmpeg2.du0_interactive_run     	0                 	0                      	0                             	0                             	0                                	0                                     	100                              	0                             	0                     	0                  	0                         	0                      
+boinc_ffmpeg2.du0_interactive_filename	0                 	0                      	0                             	0                             	0                                	0                                     	100                              	0                             	0                     	0                  	0                         	0                      
+boinc_ffmpeg2.du0_main_boinc_menu     	1                 	0                      	0                             	0                             	0                                	0                                     	0                                	0                             	0                     	0                  	0                         	0                      
+boinc_ffmpeg2.number_of_agents        	2                 	0                      	0                             	0                             	1                                	1                                     	0                                	0                             	0                     	0                  	0                         	0                      
+boinc_ffmpeg2.filename                	0                 	0                      	1                             	0                             	0                                	3                                     	0                                	0                             	0                     	0                  	0                         	0                      
+boinc_ffmpeg2.ffcom                   	0                 	0                      	1                             	0                             	0                                	202                                   	0                                	0                             	0                     	0                  	0                         	0                      
+boinc_ffmpeg2.time_portion            	0                 	0                      	0                             	0                             	1                                	2                                     	0                                	0                             	0                     	0                  	0                         	0                      
+boinc_ffmpeg2.extension               	0                 	0                      	1                             	1                             	0                                	3                                     	0                                	0                             	0                     	0                  	0                         	0                      
+	>>>Exit in graph filler
+	=======================================
+
+>>>Enter in split program
+	>>>ENTER in iterate()...
+		Num dus actuales 11 frente a 4
+		Num dus actuales 10 frente a 4
+		Num dus actuales 9 frente a 4
+		Num dus actuales 8 frente a 4
+		Num dus actuales 7 frente a 4
+		Num dus actuales 6 frente a 4
+		Num dus actuales 5 frente a 4
+		Num dus actuales 4 frente a 4
+	>>>EXIT from iterate()...
+	>>>Enter in get initial dus
+		Dus:	{'du_0': ['boinc_ffmpeg2.main'], 'du_2': ['boinc_ffmpeg2.du0_print'], 'du_3': ['boinc_ffmpeg2.du0_concat_files'], 'du_4': ['boinc_ffmpeg2.du0_main_boinc_menu', 'boinc_ffmpeg2.du0_interactive_filename', 'boinc_ffmpeg2.ffcom', 'boinc_ffmpeg2.du0_interactive_run', 'boinc_ffmpeg2.parallel_do_task', 'boinc_ffmpeg2.extension', 'boinc_ffmpeg2.filename', 'boinc_ffmpeg2.time_portion', 'boinc_ffmpeg2.number_of_agents']}
+	<<<Exit from get initial dus
+	>>>Enter in get final dus
+		Dus:	{'du_0': ['boinc_ffmpeg2.du0_main_boinc_menu', 'boinc_ffmpeg2.du0_concat_files', 'boinc_ffmpeg2.filename', 'boinc_ffmpeg2.time_portion', 'boinc_ffmpeg2.du0_print', 'boinc_ffmpeg2.number_of_agents', 'boinc_ffmpeg2.main', 'boinc_ffmpeg2.ffcom', 'boinc_ffmpeg2.du0_interactive_filename', 'boinc_ffmpeg2.du0_interactive_run', 'boinc_ffmpeg2.extension'], 'du_default': ['boinc_ffmpeg2.parallel_do_task']}
+	Critical dus:	['du_0']
+	<<<Exit from get final dus
+	<<<Enter in translate invocations
+		Checking function boinc_ffmpeg2.main
+			la invocacion boinc_ffmpeg2.du0_main_boinc_menu esta en la lista
+			Vamos a traducir <_ast.Call object at 0x036BED60>:du0_main_boinc_menu()
+
+				invoker ==> invoker_f6
+	Assign boinc_ffmpeg2.number_of_agents
+	ASIGNACIONES: ['number_of_agents']
+		Invocations translated
+		Checking function boinc_ffmpeg2.du0_print
+		Invocations translated
+		Checking function boinc_ffmpeg2.parallel_do_task
+			la invocacion boinc_ffmpeg2.du0_print esta en la lista
+			Vamos a traducir <_ast.Call object at 0x036BEF70>:du0_print(cad)
+
+				invoker ==> invoker_f1
+		Invocations translated
+		Checking function boinc_ffmpeg2.du0_concat_files
+		Invocations translated
+		Checking function boinc_ffmpeg2.du0_interactive_run
+			la invocacion boinc_ffmpeg2.parallel_do_task esta en la lista
+			la invocacion boinc_ffmpeg2.du0_concat_files esta en la lista
+			Vamos a traducir <_ast.Call object at 0x036CFAD8>:parallel_do_task(i, time_portion)
+
+				invoker ==> invoker_f2
+			Vamos a traducir <_ast.Call object at 0x036CFCA0>:du0_concat_files()
+
+				invoker ==> invoker_f3
+		Invocations translated
+		Checking function boinc_ffmpeg2.du0_interactive_filename
+	Assign boinc_ffmpeg2.filename
+	ASIGNACIONES: ['filename']
+	Assign boinc_ffmpeg2.filename
+	ASIGNACIONES: ['filename']
+	Assign boinc_ffmpeg2.extension
+	ASIGNACIONES: ['extension']
+	Assign boinc_ffmpeg2.extension
+	ASIGNACIONES: ['extension']
+	Assign boinc_ffmpeg2.time_portion
+	ASIGNACIONES: ['time_portion']
+	Assign boinc_ffmpeg2.ffcom
+	ASIGNACIONES: ['ffcom']
+	Assign boinc_ffmpeg2.ffcom
+	ASIGNACIONES: ['ffcom']
+	Assign boinc_ffmpeg2.ffcom
+	ASIGNACIONES: ['ffcom']
+		Invocations translated
+		Checking function boinc_ffmpeg2.du0_main_boinc_menu
+			la invocacion boinc_ffmpeg2.du0_interactive_run esta en la lista
+			la invocacion boinc_ffmpeg2.du0_interactive_filename esta en la lista
+			Vamos a traducir <_ast.Call object at 0x036D9448>:du0_interactive_run()
+
+				invoker ==> invoker_f4
+			Vamos a traducir <_ast.Call object at 0x036D9508>:du0_interactive_filename()
+
+				invoker ==> invoker_f5
+		Invocations translated
+	<<<Enter in translate returns
+		Checking function boinc_ffmpeg2.main
+			Func name: f0  no tiene return
+			Quiero meter 
+return json.dumps('Cloudbook: Done')
+
+		Returns changed/added
+		Checking function boinc_ffmpeg2.du0_print
+			Func name: f1  no tiene return
+			Quiero meter 
+return json.dumps('Cloudbook: Done')
+
+		Returns changed/added
+		Checking function boinc_ffmpeg2.parallel_do_task
+			Func name: f2  no tiene return
+			Quiero meter 
+return json.dumps('Cloudbook: Done')
+
+		Returns changed/added
+		Checking function boinc_ffmpeg2.du0_concat_files
+			Func name: f3  no tiene return
+			Quiero meter 
+return json.dumps('Cloudbook: Done')
+
+		Returns changed/added
+		Checking function boinc_ffmpeg2.du0_interactive_run
+			Func name: f4  no tiene return
+			Quiero meter 
+return json.dumps('Cloudbook: Done')
+
+		Returns changed/added
+		Checking function boinc_ffmpeg2.du0_interactive_filename
+			Func name: f5  no tiene return
+			Quiero meter 
+return json.dumps('Cloudbook: Done')
+
+		Returns changed/added
+		Checking function boinc_ffmpeg2.du0_main_boinc_menu
+			Func name: f6  no tiene return
+			Quiero meter 
+return json.dumps('Cloudbook: Done')
+
+		Returns changed/added
+	<<<Adding threading control
+		checking boinc_ffmpeg2.main
+		checking boinc_ffmpeg2.du0_print
+		checking boinc_ffmpeg2.parallel_do_task
+		Checking function boinc_ffmpeg2.parallel_do_task
+		checking boinc_ffmpeg2.du0_concat_files
+		checking boinc_ffmpeg2.du0_interactive_run
+		checking boinc_ffmpeg2.du0_interactive_filename
+		checking boinc_ffmpeg2.du0_main_boinc_menu
+{'du_0': ['boinc_ffmpeg2.du0_main_boinc_menu', 'boinc_ffmpeg2.du0_concat_files', 'boinc_ffmpeg2.filename', 'boinc_ffmpeg2.time_portion', 'boinc_ffmpeg2.du0_print', 'boinc_ffmpeg2.number_of_agents', 'boinc_ffmpeg2.main', 'boinc_ffmpeg2.ffcom', 'boinc_ffmpeg2.du0_interactive_filename', 'boinc_ffmpeg2.du0_interactive_run', 'boinc_ffmpeg2.extension'], 'du_default': ['boinc_ffmpeg2.parallel_do_task']}
+['du_0']
+['du_0']
+=======================================
+Cloudbook Maker completed in 0.07883477210998535
+Ending time 25-02-2020 13:20:46

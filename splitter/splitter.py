@@ -26,18 +26,26 @@ def split_program(config_dict):
 	logging.debug(">>>Enter in split program")
 	indent_log(config_dict["log_file_handler"],1)
 	iterator.iterate(config_dict)
+	logging.debug("=======================")
 	#Once collapsed, generate dus
 	#dus normales
 	get_initial_dus(config_dict)
+	logging.debug("=======================")
 	#dus tras aplicar etiquetas
 	get_final_dus(config_dict)
+	logging.debug("=======================")
 	#translate functions
 	translate_function_names(config_dict)
+	logging.debug("=======================")
 	#update function names in progrma
 	translator.tranlateInvocations(config_dict)
+	logging.debug("=======================")
 	translator.translateFunctionNames(config_dict)
+	logging.debug("=======================")
 	translator.translateReturns(config_dict)
+	logging.debug("=======================")
 	translator.add_thread_counter_minus(config_dict)
+	logging.debug("=======================")
 	#write the dus
 	#por cada du, miro imports (meto todos menos los de la antigua forma), miro cada funcion
 	#veo si hay etiquetas y trato las invocaciones

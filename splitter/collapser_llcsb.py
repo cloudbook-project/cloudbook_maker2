@@ -1,7 +1,9 @@
+import logging
 
 # low latency & code Size balanced collapser
 
 def choose_functions_to_collapse (matrix):
+	logging.debug("		>>>Getting functions to collapse")
 	#compute the maximum value of matrix to determine which functions to collapse
 	#----------------------------------------------------------------------------
 
@@ -30,5 +32,6 @@ def choose_functions_to_collapse (matrix):
 				f1_row=f1_col
 				f2_row=f2_col
 				len_collapsable =len(matrix[0][j])
+	logging.debug("		Functions to collapse: %s,%s",f2_col,f1_col)
 	return (f2_col,f1_col)
 

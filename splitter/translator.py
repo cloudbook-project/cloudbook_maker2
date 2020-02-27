@@ -23,29 +23,36 @@ class invocation_scanner(ast.NodeVisitor):
 		global function_invocations
 		global function_list
 		if isinstance(node.func, ast.Name):
-				if file+"."+node.func.id in function_list: #invocacion tipo fun()
-					logging.debug("		la invocacion %s esta en la lista", file+"."+node.func.id)
-					function_invocations.append(node)
-				else: #esta la fun en otro fichero
-					aux_func_list = [] #function list without the complete path
+			logging.debug("		The invocation is ast.Name()")
+			if file+"."+node.func.id in function_list: #invocacion tipo fun()
+				logging.debug("			The invocation %s is correctly in function list", file+"."+node.func.id)
+				function_invocations.append(node)
+			else: #esta la fun en otro fichero
+				aux_func_list = [] #function list without the complete path
+				for i in function_list:
+					aux_func_list.append(i[i.rfind(".")+1:len(i)])
+				apparitions = aux_func_list.count(node.func.id) #apparitions of function in program
+				if apparitions == 1:
+					#add complete_path_name
 					for i in function_list:
-						aux_func_list.append(i[i.rfind(".")+1:len(i)])
-					apparitions = aux_func_list.count(node.func.id) #apparitions of function in program
-					if apparitions == 1:
-						#add complete_path_name
-						for i in function_list:
-							if i[i.rfind(".")+1:len(i)] == node.func.id:
-								function_invocations.append(node)
-								break
-					elif apparitions > 1:
-						logging.error("		ERROR: too many functions with same name")
+						if i[i.rfind(".")+1:len(i)] == node.func.id:
+							logging.debug("			The invocation of %s is from other file",i)
+							function_invocations.append(node)
+							break
+				elif apparitions > 1:
+					logging.error("			ERROR: too many functions with same name")
+				else:
+					logging.debug("			Is not necessary to translate %s",node.func.id)
 		elif isinstance(node.func,ast.Attribute):
+			logging.debug("		The invocation is ast.Attribute()")
 			if isinstance(node.func.value,ast.Attribute):
-				logging.error("		ERROR: more than one abstraction level on call, in progress")
-			elif isinstance(node.func.value,ast.Name): #is global_var.fun()
+				logging.error("			ERROR: more than one abstraction level on call, in progress")
+			elif isinstance(node.func.value,ast.Name): #is global_var.fun() ,fun is the attr, global_var is func.value.id
+				logging.debug("			The atrribute is ast.Name()")
 				if file+"."+node.func.value.id in function_list:
+					logging.debug("			The invocation of global var %s is correctly in function list", file+"."+node.func.value.id)
 					function_invocations.append(node)
-				else: #not global var, is imported_function.fun()
+				else: #not global var, is imported_function.fun(), fun is the attr, imported_fun is func.value.id
 					aux_func_list = [] #function list without the complete path
 					for i in function_list:
 						aux_func_list.append(i[i.rfind(".")+1:len(i)])
@@ -54,13 +61,17 @@ class invocation_scanner(ast.NodeVisitor):
 						#add complete_path_name
 						for i in function_list:
 							if i[i.rfind(".")+1:len(i)] == node.func.attr:
+								logging.debug("			The invocation of imported function %s is from other file", i)
 								function_invocations.append(node)
 								break
 					elif apparitions > 1:
-						logging.error("		ERROR: too many functions with same name")
+						logging.error("			ERROR: too many functions with same name")
+					else:
+						logging.debug("			Is not necessary to translate %s",node.func.value.id)
 			elif isinstance(node.func.value,ast.Subscript):
+				logging.debug("		The invocation attribute is ast.Subscript()")
 				#Es un elemento de diccionario o de una lista
-				logging.debug("		La invocacion es de tipo Subscript de un nivel %s",node.func.value.value.id)
+				logging.debug("		One level subscript %s",node.func.value.value.id)
 				if file+"."+node.func.value.value.id in function_list: #global_var[x].fun()
 					function_invocations.append(node)
 				else:
@@ -428,7 +439,7 @@ def tranlateInvocations(config_dict):
 		actual_fun_name = function
 		actual_fun_fname = translated_functions[function]
 		function_node = config_dict["program_data"]["functions"][function]
-		logging.debug("	Checking function %s", function)
+		logging.debug("	Checking function %s: %s", function, actual_fun_fname)
 		invocation_scanner().visit(function_node)
 		for invocation in function_invocations:
 			logging.debug("		Vamos a traducir %s:%s",invocation,astunparse.unparse(invocation))

@@ -44,7 +44,7 @@ def create_du(du_name,config_dict):
 			else:
 				cad = "import "+ import_element["name"]
 				if import_element["alias"] is not None:
-						cad = cad + " as " + import_element["name"]
+						cad = cad + " as " + import_element["alias"]
 				f.write(cad+"\n")
 
 			#f.write(astunparse.unparse(import_element))

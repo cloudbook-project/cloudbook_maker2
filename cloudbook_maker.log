@@ -1,29 +1,32 @@
 Cloudbbok Maker started:
 =======================================
-Starting time 26-02-2020 10:43:43
+Starting time 27-02-2020 10:13:13
 Config_dict created, ready for start the maker process.
 Config_dict (relevant info):
-	input_dir:              	C:\Users\jramosdi\cloudbook\nbody2\original
-	output_dir:             	C:\Users\jramosdi\cloudbook\nbody2\distributed\du_files
+	input_dir:              	C:\Users\jramosdi\cloudbook\files\original
+	output_dir:             	C:\Users\jramosdi\cloudbook\files\distributed\du_files
 	num_dus:                	4
-	non-reliable_agent_mode:	True
+	non-reliable_agent_mode:	False
 Init complete
 =======================================
 	>>>Enter in graph builder
 		>>>Enter in file_scanner...
 		Program files:
-			./ ==> ['nbody_orig3.py']
+			./ ==> ['fichero1.py', 'fichero2.py']
+			./subdir ==> ['fichero3.py']
 		>>>Exit from file_scanner...
 
 		>>>Enter in get_program_info
 			>>>Auxiliar function to get filenames
-				Filenames: ['C:\\Users\\jramosdi\\cloudbook\\nbody2\\original\\\\nbody_orig3.py']
+				Filenames: ['C:\\Users\\jramosdi\\cloudbook\\files\\original\\\\fichero1.py', 'C:\\Users\\jramosdi\\cloudbook\\files\\original\\\\fichero2.py', 'C:\\Users\\jramosdi\\cloudbook\\files\\original\\subdir\\fichero3.py']
 			<<<Exit from get files
-			Searching in C:\Users\jramosdi\cloudbook\nbody2\original\\nbody_orig3.py for classes and functions
-			Clean file name: nbody_orig3
-			WARNING:	the integrity of the value of the global variable in line 8 cannot be verified as it is a complex type
-			WARNING:	the integrity of the value of the global variable in line 9 cannot be verified as it is a complex type
-		Function_list: ['nbody_orig3.compute_body', 'nbody_orig3.compute_contribution_force', 'nbody_orig3.main']
+			Searching in C:\Users\jramosdi\cloudbook\files\original\\fichero1.py for classes and functions
+			Clean file name: fichero1
+			Searching in C:\Users\jramosdi\cloudbook\files\original\\fichero2.py for classes and functions
+			Clean file name: fichero2
+			Searching in C:\Users\jramosdi\cloudbook\files\original\subdir\fichero3.py for classes and functions
+			Clean file name: subdir.fichero3
+		Function_list: ['fichero1.f1', 'fichero1.main', 'fichero2.f2', 'subdir.fichero3.f3']
 		Class_list: []
 		>>>Exit from get functions
 
@@ -39,130 +42,91 @@ Init complete
 
 	Graph Builder Results:
 	======================
-	Program files:	{'./': ['nbody_orig3.py']}
-	Function list:	['nbody_orig3.compute_body', 'nbody_orig3.compute_contribution_force', 'nbody_orig3.main', 'nbody_orig3.body_list', 'nbody_orig3.body_new']
+	Program files:	{'./': ['fichero1.py', 'fichero2.py'], './subdir': ['fichero3.py']}
+	Function list:	['fichero1.f1', 'fichero1.main', 'fichero2.f2', 'subdir.fichero3.f3']
 	Class list:   	None
-	Pragmas:      	{'du0_functions': [], 'parallel': ['nbody_orig3.compute_body'], 'recursive': [], 'local': ['nbody_orig3.compute_contribution_force'], 'nonblocking_def': [], 'main': 'nbody_orig3.main'}
-	Global_vars  :	{'global': ['body_list', 'body_new'], 'nonshared': [], 'const': ['CONST_N'], 'safe': []}
-	Imports      :	{'nbody_orig3': [{'type': 'fromimport', 'name': 'randint', 'alias': None, 'module': 'random', 'level': 0}, {'type': 'import', 'name': 'time', 'alias': None}, {'type': 'import', 'name': 'math', 'alias': None}, {'type': 'import', 'name': 'json', 'alias': None}]}
+	Pragmas:      	{'du0_functions': [], 'parallel': [], 'recursive': [], 'local': [], 'nonblocking_def': [], 'main': 'fichero1.main'}
+	Global_vars  :	{'global': [], 'nonshared': [], 'const': [], 'safe': []}
+	Imports      :	{'fichero1': [{'type': 'import', 'name': 'fichero2', 'alias': None}, {'type': 'fromimport', 'name': 'fichero3', 'alias': 'file3', 'module': 'subdir', 'level': 0}], 'fichero2': [], 'subdir.fichero3': []}
 	Program_index:
-	In file: nbody_orig3
-		2:	[{'type': 'fromimport', 'name': 'randint', 'alias': None, 'module': 'random', 'level': 0}]
-		3:	[{'type': 'import', 'name': 'time', 'alias': None}]
-		4:	[{'type': 'import', 'name': 'math', 'alias': None}]
-		5:	[{'type': 'import', 'name': 'json', 'alias': None}]
-		7:	[{'type': 'GLOBAL', 'value': '#__CLOUDBOOK:GLOBAL__'}]
-		8:	[{'type': 'global', 'name': 'body_list', 'value': '[(10,12,76,(-10),(-7)),(10,(-71),(-57),(-4),5),(10,81,(-52),6,(-10)),(10,30,32,(-9),4),(10,(-94),20,(-10),0),(10,12,76,(-10),(-7)),(10,(-71),(-57),(-4),5),(10,81,(-52),6,(-10)),(10,30,32,(-9),4),(10,(-94),20,(-10),0),(10,12,76,(-10),(-7)),(10,(-71),(-57),(-4),5),(10,81,(-52),6,(-10)),(10,30,32,(-9),4),(10,(-94),20,(-10),0),(10,12,76,(-10),(-7)),(10,(-71),(-57),(-4),5),(10,81,(-52),6,(-10)),(10,30,32,(-9),4),(10,(-94),20,(-10),0),(10,12,76,(-10),(-7)),(10,(-71),(-57),(-4),5),(10,81,(-52),6,(-10)),(10,30,32,(-9),4),(10,(-94),20,(-10),0),(10,12,76,(-10),(-7)),(10,(-71),(-57),(-4),5),(10,81,(-52),6,(-10)),(10,30,32,(-9),4),(10,(-94),20,(-10),0),(10,12,76,(-10),(-7)),(10,(-71),(-57),(-4),5),(10,81,(-52),6,(-10)),(10,30,32,(-9),4),(10,(-94),20,(-10),0),(10,12,76,(-10),(-7)),(10,(-71),(-57),(-4),5),(10,81,(-52),6,(-10)),(10,30,32,(-9),4),(10,(-94),20,(-10),0),(10,12,76,(-10),(-7)),(10,(-71),(-57),(-4),5),(10,81,(-52),6,(-10)),(10,30,32,(-9),4),(10,(-94),20,(-10),0),(10,12,76,(-10),(-7)),(10,(-71),(-57),(-4),5),(10,81,(-52),6,(-10)),(10,30,32,(-9),4),(10,(-94),20,(-10),0),(10,12,76,(-10),(-7)),(10,(-71),(-57),(-4),5),(10,81,(-52),6,(-10)),(10,30,32,(-9),4),(10,(-94),20,(-10),0),(10,12,76,(-10),(-7)),(10,(-71),(-57),(-4),5),(10,81,(-52),6,(-10)),(10,30,32,(-9),4),(10,(-94),20,(-10),0),(10,12,76,(-10),(-7)),(10,(-71),(-57),(-4),5),(10,81,(-52),6,(-10)),(10,30,32,(-9),4),(10,(-94),20,(-10),0),(10,12,76,(-10),(-7)),(10,(-71),(-57),(-4),5),(10,81,(-52),6,(-10)),(10,30,32,(-9),4),(10,(-94),20,(-10),0),(10,12,76,(-10),(-7)),(10,(-71),(-57),(-4),5),(10,81,(-52),6,(-10)),(10,30,32,(-9),4),(10,(-94),20,(-10),0),(10,12,76,(-10),(-7)),(10,(-71),(-57),(-4),5),(10,81,(-52),6,(-10)),(10,30,32,(-9),4),(10,(-94),20,(-10),0),(10,12,76,(-10),(-7)),(10,(-71),(-57),(-4),5),(10,81,(-52),6,(-10)),(10,30,32,(-9),4),(10,(-94),20,(-10),0),(10,12,76,(-10),(-7)),(10,(-71),(-57),(-4),5),(10,81,(-52),6,(-10)),(10,30,32,(-9),4),(10,(-94),20,(-10),0),(10,12,76,(-10),(-7)),(10,(-71),(-57),(-4),5),(10,81,(-52),6,(-10)),(10,30,32,(-9),4),(10,(-94),20,(-10),0),(10,12,76,(-10),(-7)),(10,(-71),(-57),(-4),5),(10,81,(-52),6,(-10)),(10,30,32,(-9),4),(10,(-94),20,(-10),0)]'}]
-		9:	[{'type': 'global', 'name': 'body_new', 'value': '[]'}]
-		11:	[{'type': 'CONST', 'value': '#__CLOUDBOOK:CONST__'}]
-		12:	[{'type': 'const', 'name': 'CONST_N', 'value': '100'}]
-		14:	[{'type': 'PARALLEL', 'value': '#__CLOUDBOOK:PARALLEL__'}]
-		15:	[{'type': 'function', 'name': 'compute_body'}]
-		41:	[{'type': 'LOCAL', 'value': '#__CLOUDBOOK:LOCAL__'}]
-		42:	[{'type': 'function', 'name': 'compute_contribution_force'}]
-		69:	[{'type': 'MAIN', 'value': '#__CLOUDBOOK:MAIN__'}]
-		70:	[{'type': 'function', 'name': 'main'}]
-		81:	[{'type': 'SYNC_TIME', 'value': '#__CLOUDBOOK:SYNC:4__', 'offset': 2}]
-		89:	[{'type': 'MAIN_LINE', 'value': 'main'}]
+	In file: fichero1
+		1:	[{'type': 'import', 'name': 'fichero2', 'alias': None}]
+		2:	[{'type': 'fromimport', 'name': 'fichero3', 'alias': 'file3', 'module': 'subdir', 'level': 0}]
+		4:	[{'type': 'function', 'name': 'f1'}]
+		7:	[{'type': 'MAIN', 'value': '#__CLOUDBOOK:MAIN__'}]
+		8:	[{'type': 'function', 'name': 'main'}]
+		13:	[{'type': 'MAIN_LINE', 'value': 'if'}]
+	In file: fichero2
+		3:	[{'type': 'function', 'name': 'f2'}]
+	In file: subdir.fichero3
+		2:	[{'type': 'function', 'name': 'f3'}]
 	<<<Exit from graph builder
 	=======================================
 
 	>>>Enter in graph filler
 		>>>Enter in get_invocations
-			The invocation scanner for file: nbody_orig3.compute_body is:	[{'type': 'global', 'name': 'nbody_orig3.body_list', 'line': 16, 'offset': 1, 'value': 1}, {'type': 'global', 'name': 'nbody_orig3.body_new', 'line': 17, 'offset': 1, 'value': 1}, {'type': 'loop', 'line': 21, 'offset': 1}, {'type': 'fun', 'name': 'nbody_orig3.body_new', 'line': 38, 'offset': 1, 'value': 1}]
-			The invocation scanner for file: nbody_orig3.compute_contribution_force is:	[]
-			The invocation scanner for file: nbody_orig3.main is:	[{'type': 'global', 'name': 'nbody_orig3.body_list', 'line': 71, 'offset': 1, 'value': 1}, {'type': 'global', 'name': 'nbody_orig3.body_new', 'line': 72, 'offset': 1, 'value': 1}, {'type': 'loop', 'line': 76, 'offset': 1}, {'type': 'loop', 'line': 79, 'offset': 2}, {'type': 'fun', 'name': 'nbody_orig3.compute_body', 'line': 80, 'offset': 3, 'value': 1}, {'type': 'global', 'name': 'nbody_orig3.body_list', 'line': 82, 'offset': 2, 'value': 1}, {'type': 'global', 'name': 'nbody_orig3.body_new', 'line': 83, 'offset': 2, 'value': 1}]
+			The invocation scanner for file: fichero1.f1 is:	[]
+			The invocation scanner for file: fichero1.main is:	[{'type': 'fun', 'name': 'fichero1.f1', 'line': 9, 'offset': 1, 'value': 1}, {'type': 'fun', 'name': 'fichero2.f2', 'line': 10, 'offset': 1, 'value': 1}, {'type': 'fun', 'name': 'subdir.fichero3.f3', 'line': 11, 'offset': 1, 'value': 1}]
+			The invocation scanner for file: fichero2.f2 is:	[]
+			The invocation scanner for file: subdir.fichero3.f3 is:	[]
 		>>>Enter in clean matrix
-		Removing row 3
+		Removing row 2
 		<<<Exit from clean matrix
 	Graph Filler Results:
 	======================
 	Clean matrix:
-Matrix                                	nbody_orig3.compute_body	nbody_orig3.compute_contribution_force	nbody_orig3.main	nbody_orig3.body_list	nbody_orig3.body_new
-nbody_orig3.compute_body              	0                       	0                                     	10000           	0                    	0                   
-nbody_orig3.compute_contribution_force	0                       	0                                     	0               	0                    	0                   
-nbody_orig3.main                      	0                       	0                                     	0               	0                    	0                   
-nbody_orig3.body_list                 	1                       	0                                     	2               	0                    	0                   
-nbody_orig3.body_new                  	2                       	0                                     	2               	0                    	0                   
+Matrix            	fichero1.f1	fichero1.main	fichero2.f2	subdir.fichero3.f3
+fichero1.f1       	0          	1            	0          	0                 
+fichero1.main     	0          	0            	0          	0                 
+fichero2.f2       	0          	1            	0          	0                 
+subdir.fichero3.f3	0          	1            	0          	0                 
 	>>>Exit in graph filler
 	=======================================
 
+=====================================
 >>>Enter in split program
 	>>>ENTER in iterate()...
-		>>>Getting collapser
-			Low latency & code size balanced collapser selected
-			>>>Getting functions to collapse
-			Functions to collapse: 1,3
-		>>>ENTER in collapse...
-		>>>Matrix Collapsed
-		Num dus actuales 4 frente a 4
 	>>>EXIT from iterate()...
 	=======================
 	>>>Enter in get initial dus
-		Dus:	{'du_1': ['nbody_orig3.compute_contribution_force'], 'du_0': ['nbody_orig3.main', 'nbody_orig3.compute_body'], 'du_3': ['nbody_orig3.body_list'], 'du_4': ['nbody_orig3.body_new']}
-	<<<Exit from get initial dus
+		Dus:
+			du_1:['fichero1.f1']
+			du_0:['fichero1.main']
+			du_3:['fichero2.f2']
+			du_4:['subdir.fichero3.f3']
 	=======================
+	<<<Exit from get initial dus
 	>>>Enter in get final dus
-		Dus:	{'du_0': ['nbody_orig3.body_list', 'nbody_orig3.compute_contribution_force', 'nbody_orig3.main', 'nbody_orig3.body_new'], 'du_default': ['nbody_orig3.compute_body', 'nbody_orig3.compute_contribution_force']}
-	Critical dus:	['du_0']
+		Non reliable agent mode:	False
+		Du_0 Functions:         	[]
+		Parallel functions:     	[]
+		Recursive functions:	    []
+		Local functions:	        []
+		Nonblocking functions:	    []
+		Main function:	            fichero1.main
+		Dus:
+			du_1:['fichero1.f1']
+			du_0:['fichero1.main']
+			du_3:['fichero2.f2']
+			du_4:['subdir.fichero3.f3']
+			du_default:[]
+		Critical dus:	[]
 	<<<Exit from get final dus
 	=======================
+	>>>Enter in translate function names
+		fichero1.f1 is f0
+		fichero1.main is f1
+		fichero2.f2 is f2
+		subdir.fichero3.f3 is f3
+	>>>Exit from translate function names
 	=======================
 	<<<Enter in translate invocations
-		Checking function nbody_orig3.compute_body
-			la invocacion nbody_orig3.compute_contribution_force esta en la lista
-			Vamos a traducir <_ast.Call object at 0x03A43E80>:compute_contribution_force(single_body, i)
-
-				invoker ==> invoker_f1
-			Vamos a traducir <_ast.Call object at 0x03A47820>:body_new.append(new_single_body)
-
-				invoker ==> invoker_f4
+		Checking function fichero1.f1
 		Invocations translated
-		Checking function nbody_orig3.compute_contribution_force
-		Invocations translated
-		Checking function nbody_orig3.main
-			la invocacion nbody_orig3.compute_body esta en la lista
-			Vamos a traducir <_ast.Call object at 0x03A4D9D0>:compute_body(i, j)
+		Checking function fichero1.main
+			la invocacion fichero1.f1 esta en la lista
+			Vamos a traducir <_ast.Call object at 0x036AA6A0>:f1()
 
 				invoker ==> invoker_f0
-	Assign nbody_orig3.body_list
-	ASIGNACIONES: ['body_list']
-	Assign nbody_orig3.body_new
-	ASIGNACIONES: ['body_new']
-		Invocations translated
-	=======================
-	=======================
-	<<<Enter in translate returns
-		Checking function nbody_orig3.compute_body
-			Func name: f0  no tiene return
-			Quiero meter 
-return json.dumps('Cloudbook: Done')
+			Vamos a traducir <_ast.Call object at 0x036AA700>:fichero2.f2('pepe')
 
-		Returns changed/added
-		Checking function nbody_orig3.compute_contribution_force
-	Return node: 
-return (fx, fy)
-
-			Func name: f1 tiene return
-		Returns changed/added
-		Checking function nbody_orig3.main
-	Return node: 
-return body_list
-
-			Func name: f2 tiene return
-	Return(value=Name(id='body_list', ctx=Load()))
-			Return en 70
-		Returns changed/added
-	=======================
-	<<<Adding threading control
-		checking nbody_orig3.compute_body
-		Checking function nbody_orig3.compute_body
-		checking nbody_orig3.compute_contribution_force
-		checking nbody_orig3.main
-	=======================
-{'du_0': ['nbody_orig3.body_list', 'nbody_orig3.compute_contribution_force', 'nbody_orig3.main', 'nbody_orig3.body_new'], 'du_default': ['nbody_orig3.compute_body', 'nbody_orig3.compute_contribution_force']}
-['du_0']
-['du_0']
-=======================================
-Cloudbook Maker completed in 0.0598146915435791
-Ending time 26-02-2020 10:43:43

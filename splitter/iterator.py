@@ -48,6 +48,7 @@ def iterate(config_dict):
 		
 	logging.debug(">>>EXIT from iterate()...")
 	config_dict["matrix"] = matrix
+	logging.debug("=======================")
 	return matrix
 
 	#return iterate_fake(con,matrix,desired_num_du)

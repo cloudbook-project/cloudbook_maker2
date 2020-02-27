@@ -440,6 +440,7 @@ def tranlateInvocations(config_dict):
 		function_invocations = []
 		#traduccion de declaracionde variables globales
 		translateGlobalDeclaration(config_dict,file,function,function_node)
+	logging.debug("=======================")
 		
 
 def translateParallelFunctionName(node):
@@ -451,6 +452,7 @@ def translateFunctionNames(config_dict):
 	for function in config_dict["program_data"]["functions"]:
 		file = function[:function.rfind(".")]
 		RewriteFunctionName().visit(config_dict["program_data"]["functions"][function])
+	logging.debug("=======================")
 
 def translateGlobalDeclaration(config_dict,file,function,function_node):
 	global actual_fun_name
@@ -643,6 +645,7 @@ def translateReturns(config_dict):
 			AddReturnValue().visit(function_node)
 		logging.debug("	Returns changed/added")
 		return_fun = False
+	logging.debug("=======================")
 
 
 class AddThreadBeforeReturn(ast.NodeTransformer):
@@ -799,15 +802,7 @@ def add_thread_counter_minus(config_dict):
 				function_node.body.insert(len(function_node.body),thread_call)
 			except:
 				pass
-			#function_node.body.insert(-1,ast.fix_missing_locations(thread_call)) #en insert, -1 es el penultimo, en [] el -1 es el ultimo
-			##function_node.body.insert(-1,test_const)
-			#function_node.body.insert(-1,thread_call)
-			'''positions = []
-			for num,node in enumerate(function_node.body):
-				if isinstance(node,ast.Return):
-					positions.append(num)
-			for i in positions:
-				function_node.body.insert(function_node.body[positions[i]-1],(thread_call,function_node.body[i]))
-			positions = []'''
+	logging.debug("=======================")
+
 
 

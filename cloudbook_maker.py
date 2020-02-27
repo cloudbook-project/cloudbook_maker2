@@ -169,6 +169,9 @@ indent_log(1)
 graph_analyzer.graph_builder(config_dict)
 graph_analyzer.graph_filler(config_dict)
 
+indent_log(0)
+logging.info("=====================================")
+indent_log(1)
 #Go to the splitter
 splitter.split_program(config_dict)
 

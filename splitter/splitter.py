@@ -25,27 +25,19 @@ def split_program(config_dict):
 	indent_log(config_dict["log_file_handler"],0)
 	logging.debug(">>>Enter in split program")
 	indent_log(config_dict["log_file_handler"],1)
-	iterator.iterate(config_dict)
-	logging.debug("=======================")
+	iterator.iterate(config_dict)	
 	#Once collapsed, generate dus
 	#dus normales
 	get_initial_dus(config_dict)
-	logging.debug("=======================")
 	#dus tras aplicar etiquetas
 	get_final_dus(config_dict)
-	logging.debug("=======================")
 	#translate functions
 	translate_function_names(config_dict)
-	logging.debug("=======================")
 	#update function names in progrma
 	translator.tranlateInvocations(config_dict)
-	logging.debug("=======================")
 	translator.translateFunctionNames(config_dict)
-	logging.debug("=======================")
 	translator.translateReturns(config_dict)
-	logging.debug("=======================")
 	translator.add_thread_counter_minus(config_dict)
-	logging.debug("=======================")
 	#write the dus
 	#por cada du, miro imports (meto todos menos los de la antigua forma), miro cada funcion
 	#veo si hay etiquetas y trato las invocaciones
@@ -61,6 +53,7 @@ def get_initial_dus(config_dict):
 		if i is matrix[0][0]:
 			continue
 		if config_dict["pragmas"]["main"] in matrix[0][num]: #make du_0 the one with the main function
+			#TODO if there is not Cloudbook:main pragma, here is catched
 			num_du = 0
 		if isinstance(matrix[0][num],str):
 			config_dict["dus"]["du_"+str(num_du)] = list(matrix[0][num].split())
@@ -68,8 +61,11 @@ def get_initial_dus(config_dict):
 			config_dict["dus"]["du_"+str(num_du)] = matrix[0][num]
 		else: #TODO lanzar mejor la excepcion por si acaso https://stackoverflow.com/questions/2052390/manually-raising-throwing-an-exception-in-python
 			logging.error("Error: The format of the functions from de du: %s, is invalid",matrix[0][num])
-			raise Exception("Error: The format of the functions from de du, is invalid")
-	logging.debug("	Dus:	%s", config_dict["dus"])
+			#raise Exception("Error: The format of the functions from de du, is invalid")
+	logging.debug("	Dus:")
+	for du in config_dict["dus"]:
+		logging.debug("		%s:%s",du,config_dict["dus"][du])
+	logging.debug("=======================")
 	logging.debug("<<<Exit from get initial dus")
 
 def get_final_dus(config_dict):
@@ -82,6 +78,14 @@ def get_final_dus(config_dict):
 	nonblocking_functions = config_dict["pragmas"]["nonblocking_def"]
 	main = config_dict["pragmas"]["main"]
 	dus = config_dict["dus"]
+	
+	logging.debug("	Non reliable agent mode:	%s",non_reliable_mode)
+	logging.debug("	Du_0 Functions:         	%s",du0_functions)
+	logging.debug("	Parallel functions:     	%s",parallel_functions)
+	logging.debug("	Recursive functions:	    %s",recursive_functions)
+	logging.debug("	Local functions:	        %s",local_functions)
+	logging.debug("	Nonblocking functions:	    %s",nonblocking_functions)
+	logging.debug("	Main function:	            %s",main)
 
 	if not non_reliable_mode:
 		final_dus = dus
@@ -111,10 +115,17 @@ def get_final_dus(config_dict):
 			if aux_fun in config_dict["global_vars"]["global"]:# + config_dict["global_vars"]["safe"]:
 				config_dict["critical_dus"].append(du)
 	config_dict["critical_dus"] = list(set(config_dict["critical_dus"]))
-	logging.debug("	Dus:	%s", config_dict["dus"])
-	logging.debug("Critical dus:	%s",config_dict["critical_dus"])
+	logging.debug("	Dus:")
+	for du in config_dict["dus"]:
+		logging.debug("		%s:%s",du,config_dict["dus"][du])
+	logging.debug("	Critical dus:	%s",config_dict["critical_dus"])
 	logging.debug("<<<Exit from get final dus")
+	logging.debug("=======================")
 
 def translate_function_names(config_dict):
+	logging.debug(">>>Enter in translate function names")
 	for num,function in enumerate(config_dict["function_list"]):
 		config_dict["function_translated"][function] = "f"+str(num)
+		logging.debug("	%s is %s",function,config_dict["function_translated"][function])
+	logging.debug(">>>Exit from translate function names")
+	logging.debug("=======================")

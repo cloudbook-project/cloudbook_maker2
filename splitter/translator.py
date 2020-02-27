@@ -36,7 +36,7 @@ class invocation_scanner(ast.NodeVisitor):
 					#add complete_path_name
 					for i in function_list:
 						if i[i.rfind(".")+1:len(i)] == node.func.id:
-							logging.debug("			The invocation of %s is from other file",i)
+							logging.debug("			The invocation of %s",i)
 							function_invocations.append(node)
 							break
 				elif apparitions > 1:
@@ -61,7 +61,7 @@ class invocation_scanner(ast.NodeVisitor):
 						#add complete_path_name
 						for i in function_list:
 							if i[i.rfind(".")+1:len(i)] == node.func.attr:
-								logging.debug("			The invocation of imported function %s is from other file", i)
+								logging.debug("			The invocation of imported function %s", i)
 								function_invocations.append(node)
 								break
 					elif apparitions > 1:
@@ -98,7 +98,7 @@ class RewriteInvocationName(ast.NodeTransformer):
 		global actual_fun_fname
 		global du_dest
 		global fun_dest
-
+		tabs = "			"
 		global_var_modification = False
 		global_var_subscript = False
 		subscript_index = []
@@ -106,6 +106,7 @@ class RewriteInvocationName(ast.NodeTransformer):
 		old_node = astunparse.unparse(node)
 		parallel_invocation = False
 
+		#Get name of invoked function
 		if isinstance(node.func, ast.Name):
 			invoked_fun_name = node.func.id
 			node.func.id = "invoker"
@@ -136,12 +137,12 @@ class RewriteInvocationName(ast.NodeTransformer):
 				node.func = ast.Name()
 				node.func.id = "invoker"
 
-		#ya tengo el nombre de la funcion a invocar, ahora a hacer el invoker
+		#Making the invoker dict
 		invoked_du = get_invoked_du(invoked_fun_name)
 		invoked_fun = get_invoked_fun(invoked_fun_name)
 		invoker_fun = actual_fun_fname
 
-		logging.debug("			%s ==> invoker_%s",node.func.id,translated_functions[file+"."+invoked_fun_name])
+		#logging.debug("			%s ==> invoker_%s",node.func.id,translated_functions[file+"."+invoked_fun_name])
 		arg_list = get_args_list(node)
 		kwargs_dict = get_kwargs_dict(node)
 
@@ -242,8 +243,14 @@ class RewriteInvocationName(ast.NodeTransformer):
 			node.func.id = old_node+" "*4*node.col_offset+'invoker'
 		if parallel_invocation:
 			node.func.id = "invoker({'invoked_du': 'du_0', 'invoked_function': 'thread_counter', 'invoker_function': 'thread_counter', 'params': {'args': ['++'], 'kwargs': {}}})\n"+" "*4*node.col_offset+'invoker'
-			
-		#node.func.id = old_node+"\n"+'invoker'
+		
+		logging.debug("%s	invoker function:  	 %s (%s)",tabs,actual_fun_name,actual_fun_fname)
+		logging.debug("%s	invoked function: 	 %s",tabs,invoked_fun)
+		logging.debug("%s	invoked du:		 	 %s",tabs,invoked_du)
+		logging.debug("%s	args:    		 	 %s",tabs,astunparse.unparse(arg_list).replace("\n",""))
+		logging.debug("%s	kwargs:	    	 	 %s",tabs,astunparse.unparse(kwargs_dict).replace("\n",""))
+		logging.debug("%s	global var:		 	 %s",tabs,global_var_modification)
+		logging.debug("%s	parallel invocation: %s",tabs,parallel_invocation)
 
 class RewriteAssginationsAsInvocations(ast.NodeTransformer):
 
@@ -441,12 +448,13 @@ def tranlateInvocations(config_dict):
 		function_node = config_dict["program_data"]["functions"][function]
 		logging.debug("	Checking function %s: %s", function, actual_fun_fname)
 		invocation_scanner().visit(function_node)
+		logging.debug("	All invocations obtained, now translating")
 		for invocation in function_invocations:
-			logging.debug("		Vamos a traducir %s:%s",invocation,astunparse.unparse(invocation))
+			logging.debug("		Vamos a traducir %s:	%s",invocation,astunparse.unparse(invocation).replace("\n",""))
 			RewriteInvocationName().visit(invocation)
 		RewriteAssginationsAsInvocations().visit(function_node)
 		ast.fix_missing_locations(function_node)
-		logging.debug("	Invocations translated")
+		logging.debug("	Invocations translated\n")
 		#logging.debug("		%s",astunparse.unparse(config_dict["program_data"]["functions"][function]))
 		function_invocations = []
 		#traduccion de declaracionde variables globales

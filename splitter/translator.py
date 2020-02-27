@@ -594,7 +594,7 @@ class RewriteReturnValue(ast.NodeTransformer):
 					i.value.func.value.ctx = ast.Load()
 					i.value.func.attr = 'dumps'
 					i.value.func.ctx = ast.Load()
-					logging.debug("Queda asi",astunparse.unparse(i))
+					logging.debug("Queda asi %s",astunparse.unparse(i))
 					#i = return_node
 		return node
 

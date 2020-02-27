@@ -409,7 +409,7 @@ class RewriteGlobalDeclaration(ast.NodeTransformer):
 
 
 def tranlateInvocations(config_dict):
-	logging.debug("<<<Enter in translate invocations")
+	logging.debug(">>>Enter in translate invocations")
 	global translated_functions
 	global function_list
 	global file

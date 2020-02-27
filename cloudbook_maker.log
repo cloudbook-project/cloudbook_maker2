@@ -1,6 +1,6 @@
 Cloudbbok Maker started:
 =======================================
-Starting time 27-02-2020 10:13:13
+Starting time 27-02-2020 10:35:56
 Config_dict created, ready for start the maker process.
 Config_dict (relevant info):
 	input_dir:              	C:\Users\jramosdi\cloudbook\files\original
@@ -125,8 +125,8 @@ subdir.fichero3.f3	0          	1            	0          	0
 		Invocations translated
 		Checking function fichero1.main
 			la invocacion fichero1.f1 esta en la lista
-			Vamos a traducir <_ast.Call object at 0x036AA6A0>:f1()
+			Vamos a traducir <_ast.Call object at 0x043CD6A0>:f1()
 
 				invoker ==> invoker_f0
-			Vamos a traducir <_ast.Call object at 0x036AA700>:fichero2.f2('pepe')
+			Vamos a traducir <_ast.Call object at 0x043CD700>:fichero2.f2('pepe')
 

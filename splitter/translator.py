@@ -269,7 +269,7 @@ class RewriteAssginationsAsInvocations(ast.NodeTransformer):
 				if clean_file_name+var.id in function_list:
 					#invocation_list.append({"type":"global","name": clean_file_name+var.id,"line": node.lineno, "offset":node.col_offset, "value": 1})
 					global_var_names.append(var.id)
-					logging.debug("Assign %s",clean_file_name+var.id)
+					logging.debug("		Assign %s",clean_file_name+var.id)
 				else:
 					return node
 			elif isinstance(var,ast.Tuple):
@@ -277,7 +277,7 @@ class RewriteAssginationsAsInvocations(ast.NodeTransformer):
 					if clean_file_name+i.id in function_list:
 						#invocation_list.append({"type":"global","name": clean_file_name+i.id,"line": node.lineno, "offset":node.col_offset, "value": 1})
 						global_var_names.append(i.id)
-						logging.debug("Assign %s",clean_file_name+var.id)
+						logging.debug("		Assign %s",clean_file_name+var.id)
 					else:
 						return node
 			elif isinstance(var,ast.Subscript):
@@ -288,7 +288,7 @@ class RewriteAssginationsAsInvocations(ast.NodeTransformer):
 						global_var_names.append(var.value.id)
 						#logging.debug("A VER: %s",var.slice.value.id)
 						subscript_index.append(var.slice.value)
-						logging.debug("Assign %s",clean_file_name+var.value.id)
+						logging.debug("		Assign %s",clean_file_name+var.value.id)
 					else:
 						return node
 				else:
@@ -297,12 +297,12 @@ class RewriteAssginationsAsInvocations(ast.NodeTransformer):
 			else:
 				#logging.error("ERROR left part of assignation %s not included in line %s", type(var), node.lineno)
 				return node
-		logging.debug("ASIGNACIONES: %s",global_var_names)
+		logging.debug("		global vars in the assign: %s",global_var_names)
 
 		for global_var_name in global_var_names:
 			invoked_du = get_invoked_du(global_var_name)
 			invoked_fun = get_invoked_fun(global_var_name)
-			invoker_fun = aux_config_dict["function_translated"][clean_file_name+global_var_name]
+			invoker_fun = actual_fun_fname#aux_config_dict["function_translated"][clean_file_name+global_var_name]
 
 			new_dict = ast.Dict()
 			new_dict.keys = []
@@ -379,7 +379,16 @@ class RewriteAssginationsAsInvocations(ast.NodeTransformer):
 			new_node.args.append(new_dict)
 			new_node.keywords = []
 
+			tabs = "		"
+			logging.debug("%s	invoker function:  	 %s (%s)",tabs,actual_fun_name,actual_fun_fname)
+			logging.debug("%s	invoked function: 	 %s",tabs,invoked_fun)
+			logging.debug("%s	invoked du:		 	 %s",tabs,invoked_du)
+			logging.debug("%s	args:    		 	 %s",tabs,astunparse.unparse(arg_list).replace("\n",""))
+			logging.debug("%s	kwargs:	    	 	 %s",tabs,astunparse.unparse(kwargs_dict).replace("\n",""))
+			#logging.debug("%s	global var:		 	 %s",tabs,global_var_modification)
+			#logging.debug("%s	parallel invocation: %s",tabs,parallel_invocation)
 			return node,new_node
+
 			#return ast.copy_location(new_node,node)
 			#return node,ast.fix_missing_locations(new_node)
 
@@ -448,13 +457,14 @@ def tranlateInvocations(config_dict):
 		function_node = config_dict["program_data"]["functions"][function]
 		logging.debug("	Checking function %s: %s", function, actual_fun_fname)
 		invocation_scanner().visit(function_node)
-		logging.debug("	All invocations obtained, now translating")
+		logging.debug("		===All invocations obtained, now translating")
 		for invocation in function_invocations:
-			logging.debug("		Vamos a traducir %s:	%s",invocation,astunparse.unparse(invocation).replace("\n",""))
+			logging.debug("		Let's translate %s:	%s",invocation,astunparse.unparse(invocation).replace("\n",""))
 			RewriteInvocationName().visit(invocation)
+		logging.debug("		===Translate global vars assignations as invocations:")
 		RewriteAssginationsAsInvocations().visit(function_node)
 		ast.fix_missing_locations(function_node)
-		logging.debug("	Invocations translated\n")
+		logging.debug("		===Invocations translated\n")
 		#logging.debug("		%s",astunparse.unparse(config_dict["program_data"]["functions"][function]))
 		function_invocations = []
 		#traduccion de declaracionde variables globales

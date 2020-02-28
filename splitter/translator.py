@@ -147,6 +147,7 @@ class RewriteInvocationName(ast.NodeTransformer):
 		kwargs_dict = get_kwargs_dict(node)
 
 		if file+"."+invoked_fun_name in aux_config_dict["pragmas"]["local"]: #si es local solo cambio nombre, no traduzco
+			logging.debug("%sThe function is local, therefore the invocation is not translated into invoker, is resolved locally",tabs)
 			node.func.id = translated_functions[file+"."+invoked_fun_name]
 			new_node = node
 			try:
@@ -429,8 +430,10 @@ class RewriteGlobalDeclaration(ast.NodeTransformer):
     		#print("Miro la global",global_var)
     		#Es complejo, coge cada "global algo", y lo cambia por el código de cargar la variable. Uso el config dict como aux, porque no puedo pasarlo como parametro
     		if global_var in aux_config_dict["global_vars"]["global"]:
+    			logging.debug("			The global declaration of %s will be translated",global_var)
     			global_nodes.append(create_global_declaration_node(global_var,actual_fun_name,actual_fun_fname, aux_config_dict))
     		else:
+    			logging.debug("			The global var %s does not need to be translated", global_var)
     			return node
     	return global_nodes 		
 
@@ -455,7 +458,7 @@ def tranlateInvocations(config_dict):
 		actual_fun_name = function
 		actual_fun_fname = translated_functions[function]
 		function_node = config_dict["program_data"]["functions"][function]
-		logging.debug("	Checking function %s: %s", function, actual_fun_fname)
+		logging.debug("\n	Checking function %s: %s", function, actual_fun_fname)
 		invocation_scanner().visit(function_node)
 		logging.debug("		===All invocations obtained, now translating")
 		for invocation in function_invocations:
@@ -464,7 +467,7 @@ def tranlateInvocations(config_dict):
 		logging.debug("		===Translate global vars assignations as invocations:")
 		RewriteAssginationsAsInvocations().visit(function_node)
 		ast.fix_missing_locations(function_node)
-		logging.debug("		===Invocations translated\n")
+		logging.debug("		===Invocations translated")
 		#logging.debug("		%s",astunparse.unparse(config_dict["program_data"]["functions"][function]))
 		function_invocations = []
 		#traduccion de declaracionde variables globales
@@ -496,10 +499,12 @@ def translateGlobalDeclaration(config_dict,file,function,function_node):
 	actual_fun_name = function
 	actual_fun_fname = translated_functions[function]
 	#guardamos el nombre de la funcion acualen la que estamos y hacemos el visit
+	logging.debug("		===Let's translate global declarations/refresh: global global_var")
 	RewriteGlobalDeclaration().visit(function_node)
 
 def create_global_declaration_node(global_var,actual_fun_name,actual_fun_fname, config_dict):
-	print("voy a escribir el codigo de la declaracion global")
+	tabs = "				"#4 tabs for logging
+	logging.debug("%s Let's write the global var declaration code", tabs)
 	global du_dest
 	global fun_dest
 	#busco la du destino, la funcion destino y todo eso
@@ -514,7 +519,7 @@ def create_global_declaration_node(global_var,actual_fun_name,actual_fun_fname, 
 			print("la encuentro")
 			fun_dest = config_dict["function_translated"][fun]
 
-	print("fun_dest",fun_dest)
+	#print("fun_dest",fun_dest)
 	
 	#invocation_params = "{'invoked_du':\'"+ du_dest+"\','invoked_function':\'"+fun_dest+"\','invoker_function':\'"+ actual_fun_fname+"\','params': {'args':["+'''str('''+actual_fun_fname+'''.ver_'''+global_var+'''),"None"'''+"],'kwargs':{}}}"
 	invocation_params = "{'invoked_du':\'"+ du_dest+"\','invoked_function':\'"+fun_dest+"\','invoker_function':\'"+ actual_fun_fname+"\','params': {'args':["+''+actual_fun_fname+'''.ver_'''+global_var+''',"None"'''+"],'kwargs':{}}}"
@@ -533,6 +538,11 @@ if aux_'''+global_var+''' != "None":
 ver_'''+global_var+''' = '''+actual_fun_fname+".ver_"+global_var+'''
 '''
 	#print("la convierto en:\n",code)
+	logging.debug("%s	invoker function:  	 %s (%s)",tabs,actual_fun_name,actual_fun_fname)
+	logging.debug("%s	invoked function: 	 %s",tabs,fun_dest)
+	logging.debug("%s	invoked du:		 	 %s",tabs,du_dest)
+	logging.debug("%s	args:    		 	 [%s]",tabs,actual_fun_fname+".ver_"+global_var+",'None'")
+	logging.debug("%s	kwargs:	    	 	 {}",tabs)
 	du_dest = ""
 	fun_dest = ""
 	return ast.parse(code)

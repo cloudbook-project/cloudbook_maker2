@@ -222,13 +222,13 @@ def remove_unused_imports(config_dict):
 		logging.debug("	The imports are %s",aux_config_dict[file])
 		for import_object in aux_config_dict[file]:
 			logging.debug("		Import_object: %s", import_object)
-			if import_object["type"] is 'import':
+			if import_object["type"] == 'import':
 				name_import = import_object["name"]
 				if (name_import in folders) or (name_import in files):
 					to_delete.append(import_object)
 					logging.debug("			To delete %s",import_object)
 					config_dict["imports"][file].remove(import_object)
-			if import_object["type"] is 'fromimport':
+			if import_object["type"] == 'fromimport':
 				name_import = import_object["name"]
 				module_import = import_object["module"]
 				if (name_import in folders) or (name_import in files) or (module_import in folders) or (module_import in files):

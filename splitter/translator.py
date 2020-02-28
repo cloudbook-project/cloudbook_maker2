@@ -242,6 +242,7 @@ class RewriteInvocationName(ast.NodeTransformer):
 
 		if global_var_modification:
 			node.func.id = old_node+" "*4*node.col_offset+'invoker'
+			#node.func.id = old_node+"\t"*node.col_offset+'invoker'
 		if parallel_invocation:
 			node.func.id = "invoker({'invoked_du': 'du_0', 'invoked_function': 'thread_counter', 'invoker_function': 'thread_counter', 'params': {'args': ['++'], 'kwargs': {}}})\n"+" "*4*node.col_offset+'invoker'
 		

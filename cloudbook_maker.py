@@ -190,8 +190,11 @@ for i in range(len(du_list)):
 	cadena = ""
 	file = open(out_route,"r")
 	for i in file:
-	    cadena = cadena + i	    
-	v = ComplexityVisitor.from_code(cadena)
+	    cadena = cadena + i
+	try: 
+		v = ComplexityVisitor.from_code(cadena)
+	except TabError:
+		raise TabError("Error in indentation of dus, please indent source code with divisible by 4 spaces or tab size")
 	#print(v.functions)
 	temp_complex = 0
 	temp_size = 0

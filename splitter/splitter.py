@@ -129,3 +129,4 @@ def translate_function_names(config_dict):
 		logging.debug("	%s is %s",function,config_dict["function_translated"][function])
 	logging.debug(">>>Exit from translate function names")
 	logging.debug("=======================")
+

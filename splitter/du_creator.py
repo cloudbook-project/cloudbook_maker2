@@ -6,6 +6,7 @@ import logging
 import os
 import ast
 import astunparse
+import copy
 
 from . import translator
 
@@ -31,6 +32,8 @@ def create_du(du_name,config_dict):
 	f.write("import threading\n")
 	f.write("import json\n")
 	f.write("import time\n")
+	remove_unused_imports(config_dict)
+	logging.debug("Final imports: %s",config_dict["imports"])
 	for file in config_dict["imports"]:
 		print(file)
 		for import_element in config_dict["imports"][file]:
@@ -39,7 +42,7 @@ def create_du(du_name,config_dict):
 				if import_element["level"] == 0:
 					cad = "from "+ import_element["module"]+" import "+import_element["name"]
 					if import_element["alias"] is not None:
-						cad = cad + " as " + import_element["module"]
+						cad = cad + " as " + import_element["alias"]
 					f.write(cad+"\n")
 			else:
 				cad = "import "+ import_element["name"]
@@ -200,3 +203,35 @@ def CLOUDBOOK_SYNC(t=None):
 			time.sleep(0.01)
 			value = invoker(invoker_dict)
 '''
+
+def remove_unused_imports(config_dict):
+	logging.debug(">>>Enter in remove used imports")
+	program_files = config_dict["program_files"]
+	folders = []
+	files = []
+	to_delete = []
+	aux_config_dict = copy.deepcopy(config_dict["imports"])
+	for i in config_dict["program_files"]:
+		folders.append(i.replace("./",""))
+		for j in config_dict["program_files"][i]:
+			files.append(j.replace(".py",""))
+	folders.remove('')
+	print("FOLDERS:",folders," FILES:",files)
+	for file in aux_config_dict:
+		logging.debug("	For file %s",file)
+		logging.debug("	The imports are %s",aux_config_dict[file])
+		for import_object in aux_config_dict[file]:
+			logging.debug("		Import_object: %s", import_object)
+			if import_object["type"] is 'import':
+				name_import = import_object["name"]
+				if (name_import in folders) or (name_import in files):
+					to_delete.append(import_object)
+					logging.debug("			To delete %s",import_object)
+					config_dict["imports"][file].remove(import_object)
+			if import_object["type"] is 'fromimport':
+				name_import = import_object["name"]
+				module_import = import_object["module"]
+				if (name_import in folders) or (name_import in files) or (module_import in folders) or (module_import in files):
+					to_delete.append(import_object)
+					logging.debug("			To delete %s",import_object)
+					config_dict["imports"][file].remove(import_object)

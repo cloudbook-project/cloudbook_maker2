@@ -1,4 +1,5 @@
 import logging
+import os
 
 from . import iterator
 from . import translator
@@ -25,7 +26,16 @@ def split_program(config_dict):
 	indent_log(config_dict["log_file_handler"],0)
 	logging.debug(">>>Enter in split program")
 	indent_log(config_dict["log_file_handler"],1)
-	iterator.iterate(config_dict)	
+	##iterator.iterate(config_dict)
+	if config_dict["input_matrix"] != "":
+		config_dict["matrix"] = config_dict["input_matrix"]
+	iterator.iterate(config_dict)
+	##log_results_filler(config_dict)
+	#Save collapsed matrix
+	##out_route =  config_dict["distributed_dir"] + os.sep + "matrix" + os.sep + "matrix.json"
+	##file = open(out_route,"w")
+	##file.write(str(config_dict["matrix"]))
+	##file.close()	
 	#Once collapsed, generate dus
 	#dus normales
 	get_initial_dus(config_dict)
@@ -130,3 +140,15 @@ def translate_function_names(config_dict):
 	logging.debug(">>>Exit from translate function names")
 	logging.debug("=======================")
 
+def log_results_filler(config_dict):
+	logging.info("Graph Filler Results:")
+	logging.info("======================")
+	logging.info("Clean matrix:")
+	indent_log(config_dict["log_file_handler"],0)
+	matrix = config_dict["matrix"]
+	s = [[str(e) for e in row] for row in matrix]
+	lens = [max(map(len, col)) for col in zip(*s)]
+	fmt = '\t'.join('{{:{}}}'.format(x) for x in lens)
+	table = [fmt.format(*row) for row in s]
+	logging.info('\n'.join(table))
+	indent_log(config_dict["log_file_handler"],1)

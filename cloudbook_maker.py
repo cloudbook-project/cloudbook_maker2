@@ -103,6 +103,17 @@ else:
 project_path = path+os.sep+project_folder 
 distributed_fs_path = project_path+os.sep+"distributed" 
 
+input_matrix = ""
+if filematrix != None:
+	filename = project_path+os.sep+"distributed"+os.sep+"matrix"+os.sep+filematrix
+	if filename.find(".json") == -1:
+		filename = filename+".json"
+	with open(filename, 'r') as file:
+		aux = json.load(file)
+		file.close()
+	input_matrix = aux
+logging.debug(input_matrix)
+
 #Creation of needed subfolders
 #=============================
 if not os.path.exists(distributed_fs_path):
@@ -132,11 +143,13 @@ except Exception as e:
 config_dict = {
 			"input_dir": project_path + os.sep + "original",
 			"output_dir": distributed_fs_path + os.sep + "du_files",
+			"distributed_dir": distributed_fs_path,
 			"program_files": None,
 			"function_list": None,
 			"function_translated": {},
 			"class_list": None,			
-			"matrix": None,			
+			"matrix": None,	
+			"input_matrix": input_matrix,		
 			"num_dus": config_input["NUM_DESIRED_AGENTS"],
 			"dus": {},
 			"pragmas":{},
@@ -174,6 +187,12 @@ logging.info("=====================================")
 indent_log(1)
 #Go to the splitter
 splitter.split_program(config_dict)
+
+###############Save function translated into funciton mapping
+out_route =  distributed_fs_path + os.sep + "matrix" + os.sep + "function_mapping.json"
+file = open(out_route,"w")
+file.write(str(config_dict["function_translated"]))
+file.close()
 
 ###############Create du_list and critical_dus
 indent_log(0)

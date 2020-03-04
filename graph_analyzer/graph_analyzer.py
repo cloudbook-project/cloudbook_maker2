@@ -1,4 +1,6 @@
 import logging
+import os
+import json
 from pprint import pformat
 from . import matrix_builder
 from . import get_pragmas
@@ -33,6 +35,12 @@ def graph_filler(config_dict):
 	matrix_cleaner.clean_matrix(config_dict)
 	indent_log(config_dict["log_file_handler"],1)
 	log_results_filler(config_dict)
+	#Save collapsed matrix
+	matrix_str = json.dumps(config_dict["matrix"])
+	out_route =  config_dict["distributed_dir"] + os.sep + "matrix" + os.sep + "matrix.json"
+	file = open(out_route,"w")
+	file.write(matrix_str)
+	file.close()
 	logging.debug(">>>Exit in graph filler")
 	logging.debug("=======================================\n")
 	return config_dict

@@ -331,7 +331,13 @@ class RewriteAssginationsAsInvocations(ast.NodeTransformer):
 			global_var_op.value = "="
 			global_var_op.kind = None
 			new_list.elts.append(global_var_op)
-			new_list.elts.append(node.value)
+			###new_list.elts.append(node.value)
+			#append el global var name
+			##global_var_eq = ast.Name()
+			##global_var_eq.id = global_var_name
+			##global_var_eq.ctx = ast.Load()
+			##new_list.elts.append(global_var_eq)
+			new_list.elts.append(node.targets)
 			arg_list = new_list
 			#creo kwargs_dict
 			kwargs_dict = ast.Dict()

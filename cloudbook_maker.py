@@ -191,7 +191,8 @@ splitter.split_program(config_dict)
 ###############Save function translated into funciton mapping
 out_route =  distributed_fs_path + os.sep + "matrix" + os.sep + "function_mapping.json"
 file = open(out_route,"w")
-file.write(str(config_dict["function_translated"]))
+translated_str = json.dumps(config_dict["function_translated"])
+file.write(translated_str)
 file.close()
 
 ###############Create du_list and critical_dus

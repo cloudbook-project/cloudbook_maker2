@@ -1,5 +1,6 @@
 import logging
 import os
+import sys
 
 from . import iterator
 from . import translator
@@ -58,6 +59,9 @@ def split_program(config_dict):
 def get_initial_dus(config_dict):
 	logging.debug(">>>Enter in get initial dus")
 	matrix = config_dict["matrix"]
+	if config_dict["pragmas"]["main"] == []:
+		logging.error("Error: No main pragma")
+		sys.exit("Error: No main pragma in original source code")
 	for num,i in enumerate(matrix[0]):
 		num_du = num
 		if i is matrix[0][0]:

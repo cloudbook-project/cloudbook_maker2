@@ -111,6 +111,9 @@ def get_program_info(config_dict):
 			elif "#__CLOUDBOOK:ENDREMOVE__" in line:
 				remove_lines = False
 				source+=line #is written in order to not change the source code (it will be used to get pragmas)
+			elif "__CLOUDBOOK__" in line:
+				source+=line.replace("__CLOUDBOOK__","__CLOUDBOOK__()")
+				continue
 			else:
 				if not remove_lines:
 					source += line

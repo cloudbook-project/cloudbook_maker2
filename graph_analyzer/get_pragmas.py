@@ -89,6 +89,8 @@ def get_pragmas(config_dict):
 							else: logging.warning("WARNING:	Wrong use of cloudbook pragma on line %s: There is no function after the fun definition pragma %s", tok.lineno, 'NONBLOCKING')
 						if tok.type == 'MAIN':
 							if next_token_valido(tok.lineno, config_dict, clean_file_name):
+								if config_dict["pragmas"]["main"] != []:
+									logging.warning("WARNING: The main pragma is used more than once, this may produce a bad execution")
 								config_dict["pragmas"]["main"] = clean_file_name+"."+config_dict["program_index"][clean_file_name][tok.lineno+1][0]["name"]
 							else: logging.warning("WARNING:	Wrong use of cloudbook pragma on line %s: There is no function after the fun definition pragma %s", tok.lineno, 'MAIN')
 	logging.debug("	Pragmas added to the index")

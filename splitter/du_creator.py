@@ -74,8 +74,9 @@ def create_du(du_name,config_dict):
 			#escribo el lanza hilos, y cambio nombre al nodo
 			function_name = config_dict["program_data"]["functions"][function].name
 			function_args = astunparse.unparse(config_dict["program_data"]["functions"][function].args).replace("\n","")
+			function_args_node = config_dict["program_data"]["functions"][function].args
 			function_def = "\ndef "+function_name+"("+function_args+"):"
-			function_body = function_body_text(function_name, function_args)
+			function_body = function_body_text(function_name, function_args, function_args_node)
 			f.write(function_def+function_body)
 			#renombro la parallel por parallel_fx
 			translator.translateParallelFunctionName(config_dict["program_data"]["functions"][function])
@@ -95,7 +96,14 @@ def main():
 	return '''+translated_functions[config_dict["pragmas"]["main"]]+"()"+'''
 \n'''
 
-def function_body_text(function_name, function_args): #Es necesario el return?
+def function_body_text(function_name, function_args, function_args_node): #Es necesario el return?
+	#func_args = function_args.vararg
+	#func_args = astunparse.unparse(func_args)
+	#func_kwargs = function_args.kwarg
+	#func_kwargs = astunparse.unparse(func_kwargs)
+	print("ARGUMENTOS:",ast.dump(function_args_node))
+	if len(function_args_node.defaults) > 0:
+		print("Hay",len(function_args_node.defaults),"kwargs")
 	thread_name = "thread" + function_name
 	target_name = "parallel_" + function_name
 	return '''

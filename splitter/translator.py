@@ -230,6 +230,7 @@ class RewriteInvocationName(ast.NodeTransformer):
 		new_dict.values.append(new_value)
 
 		node.args = []
+		node.keywords = [] #las keywords van al kwargs que hay en args
 		node.args.append(new_dict)
 		node.func.id = 'invoker' 
 		'''new_node = ast.Call()
@@ -253,6 +254,7 @@ class RewriteInvocationName(ast.NodeTransformer):
 		logging.debug("%s	kwargs:	    	 	 %s",tabs,astunparse.unparse(kwargs_dict).replace("\n",""))
 		logging.debug("%s	global var:		 	 %s",tabs,global_var_modification)
 		logging.debug("%s	parallel invocation: %s",tabs,parallel_invocation)
+		logging.debug("%s	final invocation: 	 %s",tabs,astunparse.unparse(node).replace("\n",""))
 
 class RewriteAssginationsAsInvocations(ast.NodeTransformer):
 
@@ -575,13 +577,47 @@ def get_args_list(node):
 		args_list.elts.append(arg)
 	return args_list
 
-def get_kwargs_dict(node):
+def get_kwargs_dict_old(node):
+	logging.debug("NODE: %s:	%s",node,astunparse.unparse(node))
 	kwargs_dict = ast.Dict()
 	kwargs_dict.keys = []
 	kwargs_dict.values = []
+	logging.debug("KWARGS_DICT: %s:	%s",kwargs_dict,astunparse.unparse(kwargs_dict))
 	for arg in node.keywords:
-		kwargs.dict.keys.append(arg.arg)
-		kwargs.dict.values.append(arg.value)
+		var_value = astunparse.unparse(arg.value)
+		var_value = re.sub(r'\s*',"",var_value)
+		value = ast.Name()
+		value.id = var_value
+		value.ctx = ast.Load()
+		logging.debug("KEYWORD: %s:	%s",arg.arg,value.id)
+		kwargs_dict.keys.append(arg.arg)
+		kwargs_dict.values.append(value)
+	#logging.debug("KWARGS_DICT: %s:	%s",kwargs_dict,astunparse.unparse(kwargs_dict))
+	return kwargs_dict
+
+def get_kwargs_dict(node):
+	logging.debug("NODE: %s:	%s",node,astunparse.unparse(node))
+	kwargs_dict = ast.Dict()
+	kwargs_dict.keys = []
+	kwargs_dict.values = []
+	'''kwargs_dict.keys = ast.List()
+	kwargs_dict.keys.ctx = ast.Load()
+	kwargs_dict.keys.elts = []
+	kwargs_dict.values = ast.List()
+	kwargs_dict.values.ctx = ast.Load()
+	kwargs_dict.values.elts = []'''
+	logging.debug("KWARGS_DICT1: %s:	%s",kwargs_dict,astunparse.unparse(kwargs_dict))
+	for arg in node.keywords:
+		logging.debug(node.keywords)
+		logging.debug("KEYWORD: %s:	%s",arg.arg,arg.value)
+		new_key = ast.Constant()
+		new_key.value = arg.arg
+		new_key.kind = None
+		#kwargs_dict.keys.elts.append(new_key)
+		#kwargs_dict.values.elts.append(arg.value)
+		kwargs_dict.keys.append(new_key)
+		kwargs_dict.values.append(arg.value)
+	logging.debug("KWARGS_DICT2: %s:	%s",kwargs_dict,astunparse.unparse(kwargs_dict))
 	return kwargs_dict
 
 class visitReturn(ast.NodeVisitor):

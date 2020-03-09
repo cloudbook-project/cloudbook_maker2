@@ -115,6 +115,7 @@ def get_final_dus(config_dict):
 		if du == "du_0": #meto las du_functions
 			final_dus["du_0"] += functions_to_append_0
 			final_dus["du_0"] = [f for f in final_dus["du_0"] if f not in functions_to_remove]
+			final_dus["du_0"].append(main)
 		else:
 			final_dus[du] = [f for f in final_dus[du] if f not in functions_to_remove]
 		final_dus[du] += functions_to_append

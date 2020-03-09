@@ -102,12 +102,43 @@ def function_body_text(function_name, function_args, function_args_node): #Es ne
 	#func_kwargs = function_args.kwarg
 	#func_kwargs = astunparse.unparse(func_kwargs)
 	print("ARGUMENTOS:",ast.dump(function_args_node))
-	if len(function_args_node.defaults) > 0:
+	kwargs_len = len(function_args_node.defaults)
+	args_len = len(function_args_node.args)
+	kwargs_dict = {}
+	kwargs_dict2 = ast.Dict()
+	kwargs_dict2.keys = []
+	kwargs_dict2.values = []
+	function_args2 = []
+	function_args3 = ""
+	if kwargs_len > 0:
 		print("Hay",len(function_args_node.defaults),"kwargs")
+		for i in range(1,kwargs_len+1):
+			aux_name = ast.Name()
+			aux_name.ctx = ast.Load()
+			aux_name.id = function_args_node.args[-i].arg
+			aux_key = ast.Constant()
+			aux_key.kind = None
+			aux_key.value = function_args_node.args[-i].arg
+			#kwargs_dict[function_args_node.args[-i].arg] = function_args_node.args[-i].arg
+			kwargs_dict[function_args_node.args[-i].arg] = function_args_node.defaults[-i].value
+			kwargs_dict2.keys.append(aux_key)
+			kwargs_dict2.values.append(aux_name)
+	kwargs_dict2 = astunparse.unparse(kwargs_dict2).replace("\n","")
+	print("KWARGS_DICT:",kwargs_dict)
+	print("KWARGS_DICT2:",kwargs_dict2)
+	for i in range(len(function_args_node.args)-kwargs_len):
+		function_args2.append(function_args_node.args[i].arg)
+	print("ARGS_LIST:", function_args)
+	for i in range(len(function_args_node.args)-kwargs_len):
+		function_args3 += function_args_node.args[i].arg
+		if i < (len(function_args_node.args)-kwargs_len)-1:
+			function_args3 += ", "
+	print("ARGS_LIST:", function_args3)
+
 	thread_name = "thread" + function_name
 	target_name = "parallel_" + function_name
 	return '''
-	'''+thread_name+''' = threading.Thread(target= '''+target_name+''', daemon = False, args = ['''+function_args+'''])
+	'''+thread_name+''' = threading.Thread(target= '''+target_name+''', daemon = False, args = ['''+function_args3+'''], kwargs='''+kwargs_dict2+''')
 	'''+thread_name+'''.start()
 	return json.dumps("cloudbook: thread launched")
 '''
@@ -243,3 +274,12 @@ def remove_unused_imports(config_dict):
 					to_delete.append(import_object)
 					logging.debug("			To delete %s",import_object)
 					config_dict["imports"][file].remove(import_object)
+
+def flatten(x):
+    result = []
+    for el in x:
+        if hasattr(el, "__iter__") and not isinstance(el, str):
+            result.extend(flatten(el))
+        else:
+            result.append(el)
+    return result

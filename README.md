@@ -1,6 +1,7 @@
 # cloudbook_maker2
 
 Requirements: PLY , radon, astunparse
+please be sure you are using pip3 tool ( if you have python2 and python3 probably you have both pip tools)
   - (install ply: pip install ply)
   - (install radon: pip install radon)
   - (install asteunparse: pip install astunparse)

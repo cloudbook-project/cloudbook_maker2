@@ -3,6 +3,7 @@ import os,sys
 import platform
 import json
 import time
+import threading
 from datetime import datetime
 from radon.visitors import ComplexityVisitor
 
@@ -12,6 +13,27 @@ from splitter import splitter
 ##CONSTANTS
 ERR_NO_PROJECT = "ERROR: Option -project_folder missing"
 ERR_NO_CONFIG = "ERROR: Distributed/config.json not available"
+
+def printProgressBar (iteration, total, prefix = '', suffix = '', decimals = 1, length = 100, fill = '█', printEnd = "\r"):
+    """
+    Call in a loop to create terminal progress bar
+    @params:
+        iteration   - Required  : current iteration (Int)
+        total       - Required  : total iterations (Int)
+        prefix      - Optional  : prefix string (Str)
+        suffix      - Optional  : suffix string (Str)
+        decimals    - Optional  : positive number of decimals in percent complete (Int)
+        length      - Optional  : character length of bar (Int)
+        fill        - Optional  : bar fill character (Str)
+        printEnd    - Optional  : end character (e.g. "\r", "\r\n") (Str)
+    """
+    percent = ("{0:." + str(decimals) + "f}").format(100 * (iteration / float(total)))
+    filledLength = int(length * iteration // total)
+    bar = fill * filledLength + '-' * (length - filledLength)
+    print('\r%s |%s| %s%% %s' % (prefix, bar, percent, suffix), end = printEnd)
+    # Print New Line on Complete
+    if iteration == total: 
+        print()
 
 def indent_log(level):
 	'''Auxiliar function to order the level of indentation in log'''
@@ -177,7 +199,33 @@ logging.debug("	%s	%s","non-reliable_agent_mode:",config_dict["non-reliable_agen
 logging.info("Init complete")
 logging.info("=======================================")
 
+build_graph = threading.Thread(target = graph_analyzer.graph_builder, args = [config_dict])
+fill_graph = threading.Thread(target = graph_analyzer.graph_filler, args = [config_dict])
+split_program = threading.Thread(target = splitter.split_program, args = [config_dict])
+
 indent_log(1)
+
+build_graph.start()
+printProgressBar(0, 4, prefix = 'Building graph                       :', suffix = 'Complete', length = 50)#, printEnd='\r')
+time.sleep(0.5)
+build_graph.join()
+
+fill_graph.start()
+printProgressBar(1, 4, prefix = 'Filling graph                        :', suffix = 'Complete', length = 50, printEnd='\r')
+time.sleep(0.5)
+fill_graph.join()
+
+indent_log(0)
+logging.info("=====================================")
+
+split_program.start()
+printProgressBar(2, 4, prefix = 'Splitting program and writing dus    :', suffix = 'Complete', length = 50, printEnd='\r')
+time.sleep(0.5)
+split_program.join()
+
+printProgressBar(3, 4, prefix = 'Getting complexity and critical dus  :', suffix = 'Complete', length = 50, printEnd='\r')
+time.sleep(0.5)
+'''indent_log(1)
 #Start the process: Graph Analyzer
 graph_analyzer.graph_builder(config_dict)
 graph_analyzer.graph_filler(config_dict)
@@ -186,7 +234,7 @@ indent_log(0)
 logging.info("=====================================")
 indent_log(1)
 #Go to the splitter
-splitter.split_program(config_dict)
+splitter.split_program(config_dict)'''
 
 ###############Save function translated into funciton mapping
 out_route =  distributed_fs_path + os.sep + "matrix" + os.sep + "function_mapping.json"
@@ -249,6 +297,9 @@ if len(config_dict["critical_dus"]) != 0:
 	fo.write(json_str)
 	fo.close()
 ##print("critical_dus file written", critical_dus_dict)
+
+#print("Process complete", end='\r')
+printProgressBar(4, 4, prefix = 'Process complete                   :', suffix = 'Completed', length = 50, printEnd='\r')
 
 end_time = time.time()
 logging.info("=======================================")

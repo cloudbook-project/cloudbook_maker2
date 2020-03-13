@@ -193,7 +193,7 @@ class RewriteInvocationName(ast.NodeTransformer):
 		new_dict.keys = []
 		new_dict.values = []
 		for i in (("invoked_du",invoked_du), ("invoked_function",invoked_fun), ("invoker_function",invoker_fun)):
-			print(i)
+			##print(i)
 			new_key = ast.Constant()
 			new_key.value = i[0]#deberia ser invoked_du, fun y invokerfun
 			new_key.kind = None
@@ -525,7 +525,7 @@ def create_global_declaration_node(global_var,actual_fun_name,actual_fun_fname, 
 
 	for fun in config_dict["function_translated"]:
 		if fun[fun.rfind(".")+1:] == global_var:
-			print("la encuentro")
+			##print("la encuentro")
 			fun_dest = config_dict["function_translated"][fun]
 
 	#print("fun_dest",fun_dest)
@@ -751,7 +751,7 @@ class AddThreadBeforeReturn(ast.NodeTransformer):
 		invoked_fun = "thread_counter"
 		invoker_fun = "thread_counter"
 		for i in (("invoked_du",invoked_du), ("invoked_function",invoked_fun), ("invoker_function",invoker_fun)):
-			print(i)
+			##print(i)
 			new_key = ast.Constant()
 			new_key.value = i[0]
 			new_key.kind = None
@@ -821,7 +821,7 @@ def add_thread_counter_minus(config_dict):
 	invoked_fun = "thread_counter"
 	invoker_fun = "thread_counter"
 	for i in (("invoked_du",invoked_du), ("invoked_function",invoked_fun), ("invoker_function",invoker_fun)):
-		print(i)
+		##print(i)
 		new_key = ast.Constant()
 		new_key.value = i[0]
 		new_key.kind = None

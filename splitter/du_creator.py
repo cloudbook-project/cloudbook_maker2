@@ -35,9 +35,9 @@ def create_du(du_name,config_dict):
 	remove_unused_imports(config_dict)
 	logging.debug("Final imports: %s",config_dict["imports"])
 	for file in config_dict["imports"]:
-		print(file)
+		##print(file)
 		for import_element in config_dict["imports"][file]:
-			print(import_element)
+			##print(import_element)
 			if import_element["type"] == 'fromimport':
 				if import_element["level"] == 0:
 					cad = "from "+ import_element["module"]+" import "+import_element["name"]
@@ -82,7 +82,7 @@ def create_du(du_name,config_dict):
 			translator.translateParallelFunctionName(config_dict["program_data"]["functions"][function])
 			#TODO el lock para hacer solo una funcion paralela, se escribe aqui la funcion como he hecho con la anterior, escribo el def y unparseo el body, y el return si tiene
 		if function in config_dict["program_data"]["functions"]: #Escribo las funciones de la du tal cual estan los nodos
-			print("Voy a escribir en",du_name,"la funcion", function)
+			##print("Voy a escribir en",du_name,"la funcion", function)
 			cadena = astunparse.unparse(config_dict["program_data"]["functions"][function])
 			f.write(cadena)
 	f.write(cloudbook_sync_code(config_dict))
@@ -101,7 +101,7 @@ def function_body_text(function_name, function_args, function_args_node): #Es ne
 	#func_args = astunparse.unparse(func_args)
 	#func_kwargs = function_args.kwarg
 	#func_kwargs = astunparse.unparse(func_kwargs)
-	print("ARGUMENTOS:",ast.dump(function_args_node))
+	##print("ARGUMENTOS:",ast.dump(function_args_node))
 	kwargs_len = len(function_args_node.defaults)
 	args_len = len(function_args_node.args)
 	kwargs_dict = {}
@@ -111,7 +111,7 @@ def function_body_text(function_name, function_args, function_args_node): #Es ne
 	function_args2 = []
 	function_args3 = ""
 	if kwargs_len > 0:
-		print("Hay",len(function_args_node.defaults),"kwargs")
+		##print("Hay",len(function_args_node.defaults),"kwargs")
 		for i in range(1,kwargs_len+1):
 			aux_name = ast.Name()
 			aux_name.ctx = ast.Load()
@@ -124,16 +124,16 @@ def function_body_text(function_name, function_args, function_args_node): #Es ne
 			kwargs_dict2.keys.append(aux_key)
 			kwargs_dict2.values.append(aux_name)
 	kwargs_dict2 = astunparse.unparse(kwargs_dict2).replace("\n","")
-	print("KWARGS_DICT:",kwargs_dict)
-	print("KWARGS_DICT2:",kwargs_dict2)
+	##print("KWARGS_DICT:",kwargs_dict)
+	##print("KWARGS_DICT2:",kwargs_dict2)
 	for i in range(len(function_args_node.args)-kwargs_len):
 		function_args2.append(function_args_node.args[i].arg)
-	print("ARGS_LIST:", function_args)
+	##print("ARGS_LIST:", function_args)
 	for i in range(len(function_args_node.args)-kwargs_len):
 		function_args3 += function_args_node.args[i].arg
 		if i < (len(function_args_node.args)-kwargs_len)-1:
 			function_args3 += ", "
-	print("ARGS_LIST:", function_args3)
+	##print("ARGS_LIST:", function_args3)
 
 	thread_name = "thread" + function_name
 	target_name = "parallel_" + function_name
@@ -255,7 +255,7 @@ def remove_unused_imports(config_dict):
 		for j in config_dict["program_files"][i]:
 			files.append(j.replace(".py",""))
 	folders.remove('')
-	print("FOLDERS:",folders," FILES:",files)
+	##print("FOLDERS:",folders," FILES:",files)
 	for file in aux_config_dict:
 		logging.debug("	For file %s",file)
 		logging.debug("	The imports are %s",aux_config_dict[file])

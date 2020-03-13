@@ -226,7 +226,7 @@ for i in range(len(du_list)):
 	du_dict[du_name]["cost"]=temp_complex
 	du_dict[du_name]["size"]=temp_size
 	#para el size resto lineas y punto
-print(du_dict)
+##print(du_dict)
 
 json_str = json.dumps(du_dict)
 #fo = open("./du_list.json", 'w')
@@ -248,7 +248,7 @@ if len(config_dict["critical_dus"]) != 0:
 	json_str = json.dumps(critical_dus_dict)
 	fo.write(json_str)
 	fo.close()
-print("critical_dus file written", critical_dus_dict)
+##print("critical_dus file written", critical_dus_dict)
 
 end_time = time.time()
 logging.info("=======================================")

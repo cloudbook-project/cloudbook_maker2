@@ -206,7 +206,7 @@ for i in config_dict["dus"].keys():
 for i in range(len(du_list)):
 	du_name = du_list[i]
 	out_route = config_dict["output_dir"]+os.sep+du_name+".py"
-	print (out_route)
+	##print (out_route)
 	cadena = ""
 	file = open(out_route,"r")
 	for i in file:

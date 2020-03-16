@@ -199,42 +199,27 @@ logging.debug("	%s	%s","non-reliable_agent_mode:",config_dict["non-reliable_agen
 logging.info("Init complete")
 logging.info("=======================================")
 
-build_graph = threading.Thread(target = graph_analyzer.graph_builder, args = [config_dict])
-fill_graph = threading.Thread(target = graph_analyzer.graph_filler, args = [config_dict])
-split_program = threading.Thread(target = splitter.split_program, args = [config_dict])
-
 indent_log(1)
-
-build_graph.start()
-printProgressBar(0, 4, prefix = 'Building graph                       :', suffix = 'Complete', length = 50)#, printEnd='\r')
-time.sleep(0.5)
-build_graph.join()
-
-fill_graph.start()
-printProgressBar(1, 4, prefix = 'Filling graph                        :', suffix = 'Complete', length = 50, printEnd='\r')
-time.sleep(0.5)
-fill_graph.join()
-
-indent_log(0)
-logging.info("=====================================")
-
-split_program.start()
-printProgressBar(2, 4, prefix = 'Splitting program and writing dus    :', suffix = 'Complete', length = 50, printEnd='\r')
-time.sleep(0.5)
-split_program.join()
-
-printProgressBar(3, 4, prefix = 'Getting complexity and critical dus  :', suffix = 'Complete', length = 50, printEnd='\r')
-time.sleep(0.5)
-'''indent_log(1)
 #Start the process: Graph Analyzer
 graph_analyzer.graph_builder(config_dict)
+printProgressBar(0, 4, prefix = 'Building graph                       :', suffix = 'Complete', length = 50)#, printEnd='\r')
+time.sleep(0.5)
+
 graph_analyzer.graph_filler(config_dict)
+printProgressBar(1, 4, prefix = 'Filling graph                        :', suffix = 'Complete', length = 50, printEnd='\r')
+time.sleep(0.5)
 
 indent_log(0)
 logging.info("=====================================")
 indent_log(1)
 #Go to the splitter
-splitter.split_program(config_dict)'''
+splitter.split_program(config_dict)
+printProgressBar(2, 4, prefix = 'Splitting program and writing dus    :', suffix = 'Complete', length = 50, printEnd='\r')
+time.sleep(0.5)
+
+printProgressBar(3, 4, prefix = 'Getting complexity and critical dus  :', suffix = 'Complete', length = 50, printEnd='\r')
+time.sleep(0.5)
+
 
 ###############Save function translated into funciton mapping
 out_route =  distributed_fs_path + os.sep + "matrix" + os.sep + "function_mapping.json"

@@ -201,20 +201,20 @@ logging.info("=======================================")
 
 indent_log(1)
 #Start the process: Graph Analyzer
-graph_analyzer.graph_builder(config_dict)
 printProgressBar(0, 4, prefix = 'Building graph                       :', suffix = 'Complete', length = 50)#, printEnd='\r')
+graph_analyzer.graph_builder(config_dict)
 time.sleep(0.5)
 
-graph_analyzer.graph_filler(config_dict)
 printProgressBar(1, 4, prefix = 'Filling graph                        :', suffix = 'Complete', length = 50, printEnd='\r')
+graph_analyzer.graph_filler(config_dict)
 time.sleep(0.5)
 
 indent_log(0)
 logging.info("=====================================")
 indent_log(1)
 #Go to the splitter
-splitter.split_program(config_dict)
 printProgressBar(2, 4, prefix = 'Splitting program and writing dus    :', suffix = 'Complete', length = 50, printEnd='\r')
+splitter.split_program(config_dict)
 time.sleep(0.5)
 
 printProgressBar(3, 4, prefix = 'Getting complexity and critical dus  :', suffix = 'Complete', length = 50, printEnd='\r')

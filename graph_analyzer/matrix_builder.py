@@ -105,10 +105,10 @@ def get_program_info(config_dict):
 				source+=re.sub(r'\#__CLOUDBOOK:SYNC:[0-9]+__',"CLOUDBOOK_SYNC("+t+")",line)
 				continue
 				#source += line.replace("#__CLOUDBOOK:SYNC__", "CLOUDBOOK_SYNC(t)")
-			elif "#__CLOUDBOOK:BEGINREMOVE__" in line:
+			elif ("#__CLOUDBOOK:BEGINREMOVE__" in line) and ("##" not in line):
 				remove_lines = True
 				source+=line #is written in order to not change the source code (it will be used to get pragmas)
-			elif "#__CLOUDBOOK:ENDREMOVE__" in line:
+			elif ("#__CLOUDBOOK:ENDREMOVE__" in line) and ("##" not in line):
 				remove_lines = False
 				source+=line #is written in order to not change the source code (it will be used to get pragmas)
 			elif "__CLOUDBOOK__" in line:

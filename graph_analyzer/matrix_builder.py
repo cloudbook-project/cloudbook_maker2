@@ -26,7 +26,7 @@ class program_scanner(ast.NodeVisitor):
 
 	def visit_ClassDef(self, node):
 		global class_names
-		global function_nodes
+		global class_nodes
 		class_names.append(node.name)
 		class_nodes[node.name] = node
 		program_index[clean_file_name][node.lineno] = []
@@ -77,6 +77,7 @@ def get_program_info(config_dict):
 	global function_nodes
 	global class_list
 	global class_names
+	global class_nodes
 	global clean_file_name
 
 	logging.debug(">>>Enter in get_program_info")
@@ -139,7 +140,7 @@ def get_program_info(config_dict):
 		class_names = []
 
 	logging.debug(f"Function_list: {function_list}")
-	logging.debug(f"Class_list: {class_names}")
+	logging.debug(f"Class_list: {class_list}")
 	config_dict["function_list"] = function_list
 	config_dict["program_data"]["functions"] = function_nodes
 	config_dict["program_index"] = program_index

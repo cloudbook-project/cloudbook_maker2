@@ -64,6 +64,9 @@ def create_du(du_name,config_dict):
 				f.write(config_dict["program_index"][file][line][0]["name"] +" = "+config_dict["program_index"][file][line][0]["value"]+"\n")
 
 	#global y safe
+	for single_class in config_dict["program_data"]["classes"]:
+		f.write(astunparse.unparse(config_dict["program_data"]["classes"][single_class]))
+		f.write("\n")
 	for function in config_dict["dus"][du_name]:
 		file = function[:function.rfind(".")]
 		if function[function.rfind(".")+1:] in config_dict["global_vars"]["global"]:

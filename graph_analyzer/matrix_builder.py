@@ -143,6 +143,7 @@ def get_program_info(config_dict):
 	logging.debug(f"Class_list: {class_list}")
 	config_dict["function_list"] = function_list
 	config_dict["program_data"]["functions"] = function_nodes
+	config_dict["program_data"]["classes"] = class_nodes
 	config_dict["program_index"] = program_index
 	config_dict["imports"] = import_dict
 	#logging.debug('Program_index:')

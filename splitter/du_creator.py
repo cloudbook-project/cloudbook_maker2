@@ -81,6 +81,8 @@ def create_du(du_name,config_dict):
 			#renombro la parallel por parallel_fx
 			translator.translateParallelFunctionName(config_dict["program_data"]["functions"][function])
 			#TODO el lock para hacer solo una funcion paralela, se escribe aqui la funcion como he hecho con la anterior, escribo el def y unparseo el body, y el return si tiene
+		if function in config_dict["pragmas"]["nonblocking_def"]:
+			pass
 		if function in config_dict["program_data"]["functions"]: #Escribo las funciones de la du tal cual estan los nodos
 			##print("Voy a escribir en",du_name,"la funcion", function)
 			cadena = astunparse.unparse(config_dict["program_data"]["functions"][function])

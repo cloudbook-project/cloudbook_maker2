@@ -108,7 +108,7 @@ def get_final_dus(config_dict):
 		for du in dus: #put all functions in du_0
 			final_dus["du_0"] += dus[du]
 
-	functions_to_remove = parallel_functions + recursive_functions
+	functions_to_remove = parallel_functions + recursive_functions + nonblocking_functions
 	functions_to_append = local_functions
 	functions_to_append_0 = du0_functions
 	for du in final_dus:

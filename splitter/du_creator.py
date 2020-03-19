@@ -82,7 +82,15 @@ def create_du(du_name,config_dict):
 			translator.translateParallelFunctionName(config_dict["program_data"]["functions"][function])
 			#TODO el lock para hacer solo una funcion paralela, se escribe aqui la funcion como he hecho con la anterior, escribo el def y unparseo el body, y el return si tiene
 		if function in config_dict["pragmas"]["nonblocking_def"]:
-			pass
+			#escribo el lanza hilos, y cambio nombre al nodo
+			function_name = config_dict["program_data"]["functions"][function].name
+			function_args = astunparse.unparse(config_dict["program_data"]["functions"][function].args).replace("\n","")
+			function_args_node = config_dict["program_data"]["functions"][function].args
+			function_def = "\ndef "+function_name+"("+function_args+"):"
+			function_body = function_body_text(function_name, function_args, function_args_node, "nonblocking")
+			f.write(function_def+function_body)
+			#renombro la parallel por parallel_fx
+			translator.translateNonBlockingDefFunctionName(config_dict["program_data"]["functions"][function])
 		if function in config_dict["program_data"]["functions"]: #Escribo las funciones de la du tal cual estan los nodos
 			##print("Voy a escribir en",du_name,"la funcion", function)
 			cadena = astunparse.unparse(config_dict["program_data"]["functions"][function])
@@ -98,7 +106,7 @@ def main():
 	return '''+translated_functions[config_dict["pragmas"]["main"]]+"()"+'''
 \n'''
 
-def function_body_text(function_name, function_args, function_args_node): #Es necesario el return?
+def function_body_text(function_name, function_args, function_args_node, function_type = "parallel"): #Es necesario el return?
 	#func_args = function_args.vararg
 	#func_args = astunparse.unparse(func_args)
 	#func_kwargs = function_args.kwarg
@@ -138,7 +146,10 @@ def function_body_text(function_name, function_args, function_args_node): #Es ne
 	##print("ARGS_LIST:", function_args3)
 
 	thread_name = "thread" + function_name
-	target_name = "parallel_" + function_name
+	if function_type == "parallel":
+		target_name = "parallel_" + function_name
+	elif function_type == "nonblocking":
+		target_name = "nonblocking_" + function_name
 	return '''
 	'''+thread_name+''' = threading.Thread(target= '''+target_name+''', daemon = False, args = ['''+function_args3+'''], kwargs='''+kwargs_dict2+''')
 	'''+thread_name+'''.start()

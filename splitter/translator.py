@@ -425,6 +425,14 @@ class RewriteParallelFunctionName(ast.NodeTransformer):
     	#node.id = translated_functions[file+"."+node.id]
     	node.name = "parallel_"+node.name
 
+class RewwriteNonBlockingDefFunctionName(ast.NodeTransformer):
+
+    def visit_FunctionDef(self, node):
+    	global file
+    	##print("	",node.id,"==>",translated_functions[file+"."+node.id])
+    	#node.id = translated_functions[file+"."+node.id]
+    	node.name = "nonblocking_"+node.name
+
 class RewriteGlobalDeclaration(ast.NodeTransformer):
 
     def visit_Global(self, node):
@@ -486,6 +494,9 @@ def tranlateInvocations(config_dict):
 
 def translateParallelFunctionName(node):
 	RewriteParallelFunctionName().visit(node)
+
+def translateNonBlockingDefFunctionName(node):
+	RewwriteNonBlockingDefFunctionName().visit(node)
 
 def translateFunctionNames(config_dict):
 	global file

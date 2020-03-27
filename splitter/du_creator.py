@@ -133,7 +133,7 @@ def function_body_text(function_name, function_args, function_args_node, functio
 			aux_key.kind = None
 			aux_key.value = function_args_node.args[-i].arg
 			#kwargs_dict[function_args_node.args[-i].arg] = function_args_node.args[-i].arg
-			kwargs_dict[function_args_node.args[-i].arg] = function_args_node.defaults[-i].value
+			#kwargs_dict[function_args_node.args[-i].arg] = function_args_node.defaults[-i].value
 			kwargs_dict2.keys.append(aux_key)
 			kwargs_dict2.values.append(aux_name)
 	kwargs_dict2 = astunparse.unparse(kwargs_dict2).replace("\n","")

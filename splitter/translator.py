@@ -889,7 +889,13 @@ def add_thread_counter_minus(config_dict):
 		logging.debug("	checking %s",original_node_name)
 		if original_node_name in config_dict["pragmas"]["parallel"]:
 			logging.debug("	Checking function %s", function)
-			AddThreadBeforeReturn().visit(function_node)
+			##AddThreadBeforeReturn().visit(function_node)
+			node = ast.parse("return 0")
+			node = function_node
+			lista = get_correct_returns(node,[])
+			for i in lista:
+				AddThreadBeforeReturn().visit(i)
+			print("\n",lista)
 			try:
 				thread_call.func.id = "\n"+" "*4*function_node.body[-1].col_offset +'invoker'
 				function_node.body.insert(len(function_node.body),thread_call)
@@ -898,4 +904,31 @@ def add_thread_counter_minus(config_dict):
 	logging.debug("=======================")
 
 
-
+def get_correct_returns(node, return_list):
+	for child in ast.iter_child_nodes(node):
+		if (isinstance(child,ast.FunctionDef)):
+			#return return_list
+			continue
+		if (isinstance(child,ast.Return)):
+			print("return")
+			return_list.append(child)
+			#return return_list
+		else:
+			suma = sum(1 for i in ast.iter_child_nodes(child))
+			if suma>0:
+				get_correct_returns(child, return_list)
+			else:
+				#return return_list
+				continue
+	return return_list
+	
+	'''print("\nLlamo a la funcion",node)
+	suma = sum(1 for i in ast.iter_child_nodes(node))
+	print("Tiene",suma,"hijos")
+	for child in ast.iter_child_nodes(node):
+		print("child",child)
+		suma = sum(1 for i in ast.iter_child_nodes(child))
+		print("Tiene",suma,"hijos")
+		if suma>0:
+			#for subchild in ast.iter_child_nodes(child):
+			get_correct_returns(child, return_list)'''

@@ -895,7 +895,7 @@ def add_thread_counter_minus(config_dict):
 			lista = get_correct_returns(node,[])
 			for i in lista:
 				AddThreadBeforeReturn().visit(i)
-			print("\n",lista)
+			#print("\n",lista)
 			try:
 				thread_call.func.id = "\n"+" "*4*function_node.body[-1].col_offset +'invoker'
 				function_node.body.insert(len(function_node.body),thread_call)
@@ -910,7 +910,7 @@ def get_correct_returns(node, return_list):
 			#return return_list
 			continue
 		if (isinstance(child,ast.Return)):
-			print("return")
+			#print("return")
 			return_list.append(child)
 			#return return_list
 		else:

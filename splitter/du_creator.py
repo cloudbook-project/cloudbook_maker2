@@ -99,8 +99,10 @@ def create_du(du_name,config_dict):
 			cadena = astunparse.unparse(config_dict["program_data"]["functions"][function])
 			f.write(cadena)
 	f.write(cloudbook_sync_code(config_dict))
+	f.write(cloudbook_critical_section_code())
 	if filename == config_dict["output_dir"]+os.sep+"du_0.py":
 		f.write(du0_thread_counter(config_dict))
+		f.write(du0_critical_section_counter())
 		f.write(d0_main(config_dict))
 
 def d0_main(config_dict):
@@ -235,6 +237,23 @@ def thread_counter(value):
 	return json.dumps(thread_counter.val)
 
 '''
+def du0_critical_section_counter():
+	return '''
+def critical_section_control(op):
+	if (not hasattr(critical_section_control, 'value')):
+		critical_section_control.value = "unlocked"
+	if (not hasattr(critical_section_control, 'lock')):
+		critical_section_control.lock = threading.Lock()
+	if critical_section_control.value == "unlocked":
+		return json.dumps(critical_section_control.value)
+	if op == 'lock':
+		with critical_section_control.lock:
+				critical_section_control.value = "locked"
+	if op == 'unlock':
+		with critical_section_control.lock:
+			critical_section_control.value = "unlocked"
+	return json.dumps(critical_section_control.value)
+'''
 
 def cloudbook_sync_code(config_dict):
 	to_write = "invoker({'invoked_du': 'du_0', 'invoked_function': 'thread_counter', 'invoker_function': 'thread_counter', 'params': {'args': ['++'], 'kwargs': {}}})\n"
@@ -257,6 +276,21 @@ def CLOUDBOOK_SYNC(t=None):
 		while value>0:
 			time.sleep(0.01)
 			value = invoker(invoker_dict)
+'''
+def cloudbook_critical_section_code():
+	return '''
+def CLOUDBOOK_LOCK(op):
+	lock_dict = {'invoked_du':'du_0', 'invoked_function': 'critical_section_control', 'invoker_function': 'critical_section_control', 'params': {'args': ['lock'], 'kwargs': {}}}
+	unlock_dict = {'invoked_du':'du_0', 'invoked_function': 'critical_section_control', 'invoker_function': 'critical_section_control', 'params': {'args': ['unlock'], 'kwargs': {}}}
+	if op == "lock":
+		value = invoker(lock_dict)
+		while value != "unlocked":
+			value = invoker(lock_dict)
+			time.sleep(0.1)
+	else:
+		invoker(unlock_dict)
+		#llamo para cambiar el valor de la du0
+
 '''
 
 def remove_unused_imports(config_dict):
@@ -292,10 +326,10 @@ def remove_unused_imports(config_dict):
 					config_dict["imports"][file].remove(import_object)
 
 def flatten(x):
-    result = []
-    for el in x:
-        if hasattr(el, "__iter__") and not isinstance(el, str):
-            result.extend(flatten(el))
-        else:
-            result.append(el)
-    return result
+	result = []
+	for el in x:
+		if hasattr(el, "__iter__") and not isinstance(el, str):
+			result.extend(flatten(el))
+		else:
+			result.append(el)
+	return result

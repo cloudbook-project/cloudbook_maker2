@@ -16,7 +16,10 @@ def get_pragmas(config_dict):
 	tokens = ['GLOBAL','NONSHARED','CONST','SAFE',
 	'PARALLEL','RECURSIVE','LOCAL','DU0_FUNCTION','NONBLOCKING',
 	'NONBLOCKING_INV','SYNC','SYNC_TIME','MAIN','BEGINREMOVE','ENDREMOVE',
-	'MAIN_LINE']
+	'LOCK','UNLOCK','MAIN_LINE']
+	
+	#Regex for pragmas: Pragmas for variables and functions must be in the beginning of line
+	#Regex for pragmas: Pragmas for invocations and code control can be at any indentation
 
 	t_GLOBAL = r'^\#__CLOUDBOOK:GLOBAL__'
 	t_NONSHARED = r'^\#__CLOUDBOOK:NONSHARED__'
@@ -28,11 +31,13 @@ def get_pragmas(config_dict):
 	t_DU0_FUNCTION = r'^\#__CLOUDBOOK:DU0__'
 	t_NONBLOCKING = r'^\#__CLOUDBOOK:NONBLOCKING__'
 	t_NONBLOCKING_INV = r'^\#__CLOUDBOOK:NONBLOCKING_INV__'
-	t_SYNC = r'^\#__CLOUDBOOK:SYNC__'
-	t_SYNC_TIME = r'^\#__CLOUDBOOK:SYNC:[0-9]+__'
+	t_SYNC = r'^[\s]*\#__CLOUDBOOK:SYNC__'
+	t_SYNC_TIME = r'^[\s]*\#__CLOUDBOOK:SYNC:[0-9]+__'
 	t_MAIN = r'^\#__CLOUDBOOK:MAIN__'
-	t_BEGINREMOVE = r'^\#__CLOUDBOOK:BEGINREMOVE__'
-	t_ENDREMOVE = r'^\#__CLOUDBOOK:ENDREMOVE__'
+	t_BEGINREMOVE = r'^[\s]*\#__CLOUDBOOK:BEGINREMOVE__'
+	t_ENDREMOVE = r'^[\s]*\#__CLOUDBOOK:ENDREMOVE__'
+	t_LOCK = r'^[\s]*\#__CLOUDBOOK:LOCK__'
+	t_UNLOCK = r'^[\s]*\#__CLOUDBOOK:UNLOCK__'
 	t_MAIN_LINE = r'^\w+'
 
 	def t_error(t):
@@ -62,6 +67,10 @@ def get_pragmas(config_dict):
 					else:
 						config_dict["program_index"][clean_file_name][tok.lineno] = []
 						if tok.type == "SYNC" or tok.type == "SYNC_TIME":
+							config_dict["program_index"][clean_file_name][tok.lineno].append({"type":tok.type,"value":tok.value, "offset":tok.lexpos})
+						elif tok.type == "LOCK":
+							config_dict["program_index"][clean_file_name][tok.lineno].append({"type":tok.type,"value":tok.value, "offset":tok.lexpos})
+						elif tok.type == "UNLOCK":
 							config_dict["program_index"][clean_file_name][tok.lineno].append({"type":tok.type,"value":tok.value, "offset":tok.lexpos})
 						else:
 							config_dict["program_index"][clean_file_name][tok.lineno].append({"type":tok.type,"value":tok.value})#(tok.type,tok.value)

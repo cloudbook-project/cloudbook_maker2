@@ -110,7 +110,7 @@ def get_program_info(config_dict):
 				source+=re.sub(r'\#__CLOUDBOOK:LOCK__','CLOUDBOOK_LOCK("lock")',line)
 				continue
 			elif '#__CLOUDBOOK:UNLOCK__' in line:
-				source+=re.sub(r'\#__CLOUDBOOK:UNLOCK__','CLOUDBOOK_LOCK("unlock")',line)
+				source+=re.sub(r'\#__CLOUDBOOK:UNLOCK__','CLOUDBOOK_UNLOCK("unlock")',line)
 				continue
 			elif ("#__CLOUDBOOK:BEGINREMOVE__" in line) and ("##" not in line):
 				remove_lines = True

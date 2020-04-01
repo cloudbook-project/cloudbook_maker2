@@ -102,7 +102,7 @@ def create_du(du_name,config_dict):
 	f.write(cloudbook_critical_section_code())
 	if filename == config_dict["output_dir"]+os.sep+"du_0.py":
 		f.write(du0_thread_counter(config_dict))
-		f.write(du0_critical_section_counter())
+		f.write(du0_critical_section_control())
 		f.write(d0_main(config_dict))
 
 def d0_main(config_dict):
@@ -237,22 +237,21 @@ def thread_counter(value):
 	return json.dumps(thread_counter.val)
 
 '''
-def du0_critical_section_counter():
+def du0_critical_section_control():
 	return '''
 def critical_section_control(op):
 	if (not hasattr(critical_section_control, 'value')):
 		critical_section_control.value = "unlocked"
-	#with critical_section_control.lock: #mejora, probar
 	if (not hasattr(critical_section_control, 'lock')):
 		critical_section_control.lock = threading.Lock()
-	if critical_section_control.value == "unlocked":
-		return json.dumps(critical_section_control.value)
+	with critical_section_control.lock:
+		if critical_section_control.value == "unlocked":
+			critical_section_control.value = "locked"
+			return json.dumps("unlocked")
 	if op == 'lock':
-		with critical_section_control.lock:
-				critical_section_control.value = "locked"
+		critical_section_control.value = "locked"
 	if op == 'unlock':
-		with critical_section_control.lock:
-			critical_section_control.value = "unlocked"
+		critical_section_control.value = "unlocked"
 	return json.dumps(critical_section_control.value)
 '''
 
@@ -282,15 +281,16 @@ def cloudbook_critical_section_code():
 	return '''
 def CLOUDBOOK_LOCK(op):
 	lock_dict = {'invoked_du':'du_0', 'invoked_function': 'critical_section_control', 'invoker_function': 'critical_section_control', 'params': {'args': ['lock'], 'kwargs': {}}}
-	unlock_dict = {'invoked_du':'du_0', 'invoked_function': 'critical_section_control', 'invoker_function': 'critical_section_control', 'params': {'args': ['unlock'], 'kwargs': {}}}
-	if op == "lock":
+	value = invoker(lock_dict)
+	#print("value:",value)
+	while value != "unlocked":
+		#print("no entro")
 		value = invoker(lock_dict)
-		while value != "unlocked":
-			value = invoker(lock_dict)
-			time.sleep(0.1)
-	else:
-		invoker(unlock_dict)
-		#llamo para cambiar el valor de la du0
+		time.sleep(0.1)
+
+def CLOUDBOOK_UNLOCK(op):
+	unlock_dict = {'invoked_du':'du_0', 'invoked_function': 'critical_section_control', 'invoker_function': 'critical_section_control', 'params': {'args': ['unlock'], 'kwargs': {}}}
+	invoker(unlock_dict)
 
 '''
 

@@ -242,6 +242,7 @@ def du0_critical_section_counter():
 def critical_section_control(op):
 	if (not hasattr(critical_section_control, 'value')):
 		critical_section_control.value = "unlocked"
+	#with critical_section_control.lock: #mejora, probar
 	if (not hasattr(critical_section_control, 'lock')):
 		critical_section_control.lock = threading.Lock()
 	if critical_section_control.value == "unlocked":

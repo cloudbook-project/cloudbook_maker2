@@ -522,7 +522,7 @@ def translateGlobalDeclaration(config_dict,file,function,function_node):
 	logging.debug("		===Let's translate global declarations/refresh: global global_var")
 	RewriteGlobalDeclaration().visit(function_node)
 
-def create_global_declaration_node(global_var,actual_fun_name,actual_fun_fname, config_dict):
+def create_global_declaration_node_old(global_var,actual_fun_name,actual_fun_fname, config_dict):
 	tabs = "				"#4 tabs for logging
 	logging.debug("%s Let's write the global var declaration code", tabs)
 	global du_dest
@@ -551,6 +551,54 @@ if not hasattr('''+actual_fun_fname+''', '''+'"ver_'+global_var+'"'+'''):
 	'''+actual_fun_fname+".ver_"+global_var+''' = 0
 
 aux_'''+global_var+''',aux_ver = invoker('''+invocation_params+''')
+if aux_'''+global_var+''' != "None":
+	'''+actual_fun_fname+"."+global_var+''' = aux_'''+global_var+'''
+'''+global_var+''' = '''+actual_fun_fname+"."+global_var+'''
+'''+actual_fun_fname+".ver_"+global_var+''' = aux_ver
+ver_'''+global_var+''' = '''+actual_fun_fname+".ver_"+global_var+'''
+'''
+	#print("la convierto en:\n",code)
+	logging.debug("%s	invoker function:  	 %s (%s)",tabs,actual_fun_name,actual_fun_fname)
+	logging.debug("%s	invoked function: 	 %s",tabs,fun_dest)
+	logging.debug("%s	invoked du:		 	 %s",tabs,du_dest)
+	logging.debug("%s	args:    		 	 [%s]",tabs,actual_fun_fname+".ver_"+global_var+",'None'")
+	logging.debug("%s	kwargs:	    	 	 {}",tabs)
+	du_dest = ""
+	fun_dest = ""
+	return ast.parse(code)
+
+def create_global_declaration_node(global_var,actual_fun_name,actual_fun_fname, config_dict):
+	tabs = "				"#4 tabs for logging
+	logging.debug("%s Let's write the global var declaration code", tabs)
+	global du_dest
+	global fun_dest
+	#busco la du destino, la funcion destino y todo eso
+	for du in config_dict["dus"]:
+		for fun in config_dict["dus"][du]:
+			if fun[fun.rfind(".")+1:] == global_var:
+				du_dest = du
+	#du_dest = [du_dest]
+
+	for fun in config_dict["function_translated"]:
+		if fun[fun.rfind(".")+1:] == global_var:
+			##print("la encuentro")
+			fun_dest = config_dict["function_translated"][fun]
+
+	#print("fun_dest",fun_dest)
+	
+	#invocation_params = "{'invoked_du':\'"+ du_dest+"\','invoked_function':\'"+fun_dest+"\','invoker_function':\'"+ actual_fun_fname+"\','params': {'args':["+'''str('''+actual_fun_fname+'''.ver_'''+global_var+'''),"None"'''+"],'kwargs':{}}}"
+	invocation_params = "{'invoked_du':\'"+ du_dest+"\','invoked_function':\'"+fun_dest+"\','invoker_function':\'"+ actual_fun_fname+"\','params': {'args':["+''+actual_fun_fname+'''.ver_'''+global_var+''',"None"'''+"],'kwargs':{}}}"
+
+	code = '''
+if not hasattr('''+actual_fun_fname+''', '''+'"'+global_var+'"'+'''):
+	'''+actual_fun_fname+"."+global_var+''' = None
+if not hasattr('''+actual_fun_fname+''', '''+'"ver_'+global_var+'"'+'''):
+	'''+actual_fun_fname+".ver_"+global_var+''' = 0
+
+try:
+	aux_'''+global_var+''',aux_ver = invoker('''+invocation_params+''')
+except:
+	aux_'''+global_var+''',aux_ver = json.loads(invoker('''+invocation_params+'''))
 if aux_'''+global_var+''' != "None":
 	'''+actual_fun_fname+"."+global_var+''' = aux_'''+global_var+'''
 '''+global_var+''' = '''+actual_fun_fname+"."+global_var+'''

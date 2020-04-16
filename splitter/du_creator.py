@@ -237,7 +237,7 @@ def thread_counter(value):
 	return json.dumps(thread_counter.val)
 
 '''
-def du0_critical_section_control():
+def du0_critical_section_control_old():
 	return '''
 def critical_section_control(op):
 	if (not hasattr(critical_section_control, 'value')):
@@ -252,6 +252,25 @@ def critical_section_control(op):
 		critical_section_control.value = "locked"
 	if op == 'unlock':
 		critical_section_control.value = "unlocked"
+	return json.dumps(critical_section_control.value)
+'''
+
+def du0_critical_section_control():
+	return '''
+def critical_section_control(op):
+	if (not hasattr(critical_section_control, 'value')):
+		critical_section_control.value = "unlocked"
+	if (not hasattr(critical_section_control, 'lock')):
+		critical_section_control.lock = threading.Lock()
+	with critical_section_control.lock:
+		if op == 'lock':
+			if critical_section_control.value == "unlocked":
+				critical_section_control.value = "locked"
+				return json.dumps("unlocked")
+			else:
+				critical_section_control.value = "locked"
+		if op == 'unlock':
+			critical_section_control.value = "unlocked"
 	return json.dumps(critical_section_control.value)
 '''
 
@@ -279,7 +298,7 @@ def CLOUDBOOK_SYNC(t=None):
 '''
 def cloudbook_critical_section_code():
 	return '''
-def CLOUDBOOK_LOCK(op):
+def CLOUDBOOK_LOCK():
 	lock_dict = {'invoked_du':'du_0', 'invoked_function': 'critical_section_control', 'invoker_function': 'critical_section_control', 'params': {'args': ['lock'], 'kwargs': {}}}
 	value = invoker(lock_dict)
 	#print("value:",value)
@@ -288,7 +307,7 @@ def CLOUDBOOK_LOCK(op):
 		value = invoker(lock_dict)
 		time.sleep(0.1)
 
-def CLOUDBOOK_UNLOCK(op):
+def CLOUDBOOK_UNLOCK():
 	unlock_dict = {'invoked_du':'du_0', 'invoked_function': 'critical_section_control', 'invoker_function': 'critical_section_control', 'params': {'args': ['unlock'], 'kwargs': {}}}
 	invoker(unlock_dict)
 

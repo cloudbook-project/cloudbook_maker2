@@ -14,7 +14,7 @@ from splitter import splitter
 ERR_NO_PROJECT = "ERROR: Option -project_folder missing"
 ERR_NO_CONFIG = "ERROR: Distributed/config.json not available"
 
-def printProgressBar (iteration, total, prefix = '', suffix = '', decimals = 1, length = 100, fill = '█', printEnd = "\r"):
+def printProgressBar_old (iteration, total, prefix = '', suffix = '', decimals = 1, length = 100, fill = '█', printEnd = "\r"):
     """
     Call in a loop to create terminal progress bar
     @params:
@@ -34,6 +34,28 @@ def printProgressBar (iteration, total, prefix = '', suffix = '', decimals = 1, 
     # Print New Line on Complete
     if iteration == total: 
         print()
+
+def printProgressBar(iteration, total, prefix='', suffix='', decimals=1, length=100, printEnd = "\r"):
+    """
+    Call in a loop to create terminal progress bar
+    @params:
+        iteration   - Required  : current iteration (Int)
+        total       - Required  : total iterations (Int)
+        prefix      - Optional  : prefix string (Str)
+        suffix      - Optional  : suffix string (Str)
+        decimals    - Optional  : positive number of decimals in percent complete (Int)
+        length  - Optional  : character length of bar (Int)
+    """
+    str_format = "{0:." + str(decimals) + "f}"
+    percents = str_format.format(100 * (iteration / float(total)))
+    filled_length = int(round(length * iteration / float(total)))
+    bar = '█' * filled_length + '-' * (length - filled_length)
+
+    sys.stdout.write('\r%s |%s| %s%s %s' % (prefix, bar, percents, '%', suffix)),
+
+    if iteration == total:
+        sys.stdout.write('\n')
+    sys.stdout.flush()
 
 def indent_log(level):
 	'''Auxiliar function to order the level of indentation in log'''

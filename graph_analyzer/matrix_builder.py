@@ -131,6 +131,13 @@ def get_program_info(config_dict):
 					line_tabs = line.rstrip().count("\t")
 					new_line = "\t"*line_tabs+"nonblocking_inv_"+re.sub(r'\s','',line)+"#" #comment the original line, written in next if
 					source += new_line
+					###GET PRAGMA IN CONFIG DICT
+					if "nonblocking_inv" not in config_dict["pragmas"]:
+						config_dict["pragmas"]["nonblocking_inv"] = []
+					invocation_fun = re.sub(r'\s','',line)
+					invocation_fun = invocation_fun[:invocation_fun.find("(")]
+					config_dict["pragmas"]["nonblocking_inv"].append(clean_file_name +"."+ invocation_fun)
+					###EXIT FROM GET PRAGMA IN CONFIG DICT
 					nonblocking_inv = False
 				if not remove_lines:
 					source += line

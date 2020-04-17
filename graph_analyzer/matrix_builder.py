@@ -95,6 +95,7 @@ def get_program_info(config_dict):
 		remove_lines = False
 		source = ""
 		source_file = open(filename, "r")
+		nonblocking_inv = False
 		for line in source_file:
 			if "#__CLOUDBOOK:SYNC__" in line:
 				source += line.replace("#__CLOUDBOOK:SYNC__", "CLOUDBOOK_SYNC()")
@@ -121,7 +122,16 @@ def get_program_info(config_dict):
 			elif "__CLOUDBOOK__" in line:
 				source+=line.replace("__CLOUDBOOK__","__CLOUDBOOK__()")
 				continue
+			elif "__CLOUDBOOK:NONBLOCKING_INV__" in line:
+				source+=line
+				nonblocking_inv = True
+				continue
 			else:
+				if nonblocking_inv and not remove_lines:
+					line_tabs = line.rstrip().count("\t")
+					new_line = "\t"*line_tabs+"nonblocking_inv_"+re.sub(r'\s','',line)+"#" #comment the original line, written in next if
+					source += new_line
+					nonblocking_inv = False
 				if not remove_lines:
 					source += line
 				else:

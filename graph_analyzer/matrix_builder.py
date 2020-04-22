@@ -96,6 +96,7 @@ def get_program_info(config_dict):
 		source = ""
 		source_file = open(filename, "r")
 		nonblocking_inv = False
+		nonblocking_inv_index = 0
 		for line in source_file:
 			if "#__CLOUDBOOK:SYNC__" in line:
 				source += line.replace("#__CLOUDBOOK:SYNC__", "CLOUDBOOK_SYNC()")
@@ -129,16 +130,18 @@ def get_program_info(config_dict):
 			else:
 				if nonblocking_inv and not remove_lines:
 					line_tabs = line.rstrip().count("\t")
-					new_line = "\t"*line_tabs+"nonblocking_inv_"+re.sub(r'\s','',line)+"#" #comment the original line, written in next if
+					new_line = "\t"*line_tabs+"nonblocking_inv_"+str(nonblocking_inv_index)+"_"+re.sub(r'\s','',line)+"#" #comment the original line, written in next if
 					source += new_line
 					###GET PRAGMA IN CONFIG DICT
-					if "nonblocking_inv" not in config_dict["pragmas"]:
-						config_dict["pragmas"]["nonblocking_inv"] = []
 					invocation_fun = re.sub(r'\s','',line)
 					invocation_fun = invocation_fun[:invocation_fun.find("(")]
-					config_dict["pragmas"]["nonblocking_inv"].append(clean_file_name +"."+ invocation_fun)
+					function_name = clean_file_name +"."+ invocation_fun
+					if function_name not in config_dict["nonblocking_invocations"]:
+						config_dict["nonblocking_invocations"][function_name]=[]
+					config_dict["nonblocking_invocations"][function_name].append("nonblocking_inv_"+str(nonblocking_inv_index)+"_"+invocation_fun)
 					###EXIT FROM GET PRAGMA IN CONFIG DICT
 					nonblocking_inv = False
+					nonblocking_inv_index += 1
 				if not remove_lines:
 					source += line
 				else:

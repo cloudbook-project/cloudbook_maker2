@@ -100,6 +100,9 @@ def create_du(du_name,config_dict):
 			f.write(cadena)
 	f.write(cloudbook_sync_code(config_dict))
 	f.write(cloudbook_critical_section_code())
+	if filename == config_dict["output_dir"]+os.sep+"du_default.py":
+		noblocking_invocations_thread_launcher(config_dict,f)
+		noblocking_invocations_target_code(config_dict,f)
 	if filename == config_dict["output_dir"]+os.sep+"du_0.py":
 		f.write(du0_thread_counter(config_dict))
 		f.write(du0_critical_section_control())
@@ -155,6 +158,8 @@ def function_body_text(function_name, function_args, function_args_node, functio
 		target_name = "parallel_" + function_name
 	elif function_type == "nonblocking":
 		target_name = "nonblocking_" + function_name
+	elif function_type == "nonblocking_inv":
+		target_name = "nonblocking_inv_" + function_name
 	return '''
 	'''+thread_name+''' = threading.Thread(target= '''+target_name+''', daemon = False, args = ['''+function_args3+'''], kwargs='''+kwargs_dict2+''')
 	'''+thread_name+'''.start()
@@ -353,3 +358,22 @@ def flatten(x):
 		else:
 			result.append(el)
 	return result
+
+def noblocking_invocations_thread_launcher(config_dict, file):
+	logging.debug(">>> Writting nonblocking invocations")
+	for function in config_dict["nonblocking_invocations"]:
+		for invocation in config_dict["nonblocking_invocations"][function]:
+			function_name = config_dict["program_data"]["functions"][function].name
+			function_args = astunparse.unparse(config_dict["program_data"]["functions"][function].args).replace("\n","")
+			function_args_node = config_dict["program_data"]["functions"][function].args
+			function_def = "\ndef "+invocation+"("+function_args+"):"
+			function_body = function_body_text(function_name, function_args, function_args_node, "nonblocking_inv")
+			file.write(function_def+function_body)
+	#escribo la funcion con nombre normal
+
+def noblocking_invocations_target_code(config_dict,file):
+	logging.debug(">>> Writting nonblocking target_code")
+	for function in config_dict["nonblocking_invocations"]:
+		new_function = config_dict["program_data"]["functions"][function]
+		new_function.name = "nonblocking_inv_"+ config_dict["program_data"]["functions"][function].name
+		file.write(astunparse.unparse(new_function))

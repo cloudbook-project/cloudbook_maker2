@@ -16,6 +16,9 @@ du_dest = ""
 fun_dest = ""
 
 return_fun = False
+#global vars for nonblocking invocations
+nonblocking_invocations = {}
+nonblocking_function_invocations = []
 
 class invocation_scanner(ast.NodeVisitor):
 
@@ -980,3 +983,283 @@ def get_correct_returns(node, return_list):
 		if suma>0:
 			#for subchild in ast.iter_child_nodes(child):
 			get_correct_returns(child, return_list)'''
+
+class Nonblocking_inv_scannner(ast.NodeVisitor):
+
+	def visit_Call(self, node):
+		global nonblocking_invocations
+		global nonblocking_function_invocations
+		global function_list
+		if isinstance(node.func, ast.Name):
+			logging.debug("		The invocation is ast.Name()")
+			if node.func.id.startswith("nonblocking_inv_",0):
+				invocation_name = re.sub(r'nonblocking_inv_\d+_','',node.func.id)
+				if file+"."+invocation_name in function_list: #invocacion tipo fun()
+					logging.debug("			The invocation %s is correctly in function list", file+"."+invocation_name)
+					nonblocking_function_invocations.append(node)
+				else: #esta la fun en otro fichero
+					aux_func_list = [] #function list without the complete path
+					for i in function_list:
+						aux_func_list.append(i[i.rfind(".")+1:len(i)])
+					apparitions = aux_func_list.count(invocation_name) #apparitions of function in program
+					if apparitions == 1:
+						#add complete_path_name
+						for i in function_list:
+							if i[i.rfind(".")+1:len(i)] == invocation_name:
+								logging.debug("			The invocation of %s",i)
+								nonblocking_function_invocations.append(node)
+								break
+					elif apparitions > 1:
+						logging.error("			ERROR: too many functions with same name")
+					else:
+						logging.debug("			Is not necessary to translate %s",node.func.id)
+		'''elif isinstance(node.func,ast.Attribute):
+			logging.debug("		The invocation is ast.Attribute()")
+			if isinstance(node.func.value,ast.Attribute):
+				logging.error("			ERROR: more than one abstraction level on call, in progress")
+			elif isinstance(node.func.value,ast.Name): #is global_var.fun() ,fun is the attr, global_var is func.value.id
+				logging.debug("			The atrribute is ast.Name()")
+				invocation_name = re.sub(r'nonblocking_inv_\d+_','',node.func.value.id)
+				if file+"."+node.func.value.id in function_list:
+					logging.debug("			The invocation of global var %s is correctly in function list", file+"."+node.func.value.id)
+					nonblocking_function_invocations.append(node)
+				else: #not global var, is imported_function.fun(), fun is the attr, imported_fun is func.value.id
+					aux_func_list = [] #function list without the complete path
+					for i in function_list:
+						aux_func_list.append(i[i.rfind(".")+1:len(i)])
+					apparitions = aux_func_list.count(node.func.attr) #apparitions of function in program
+					if apparitions == 1:
+						#add complete_path_name
+						for i in function_list:
+							if i[i.rfind(".")+1:len(i)] == node.func.attr:
+								logging.debug("			The invocation of imported function %s", i)
+								nonblocking_function_invocations.append(node)
+								break
+					elif apparitions > 1:
+						logging.error("			ERROR: too many functions with same name")
+					else:
+						logging.debug("			Is not necessary to translate %s",node.func.value.id)
+			elif isinstance(node.func.value,ast.Subscript):
+				logging.debug("		The invocation attribute is ast.Subscript()")
+				#Es un elemento de diccionario o de una lista
+				logging.debug("		One level subscript %s",node.func.value.value.id)
+				if file+"."+node.func.value.value.id in function_list: #global_var[x].fun()
+					nonblocking_function_invocations.append(node)
+				else:
+					logging.error("		The subscript is not from global var in lineno %s", node.lineno)
+			else:
+				logging.error("		ERROR: Unknown type of invocation in %s",node.lineno)'''
+
+
+class RewriteNonblockingInvocationName(ast.NodeTransformer):
+
+	def visit_Call(self, node):
+		global file
+		global aux_config_dict
+		global function_list
+		global actual_fun_name
+		global actual_fun_fname
+		global du_dest
+		global fun_dest
+		tabs = "			"
+		global_var_modification = False
+		global_var_subscript = False
+		subscript_index = []
+		old_node_node = node
+		old_node = astunparse.unparse(node)
+		parallel_invocation = False
+
+		#Get name of invoked function
+		if isinstance(node.func, ast.Name):
+			invoked_fun_name = node.func.id
+			node.func.id = "invoker"
+				
+		elif isinstance(node.func,ast.Attribute):
+			if isinstance(node.func.value,ast.Name):
+				if file+"."+node.func.value.id in function_list: #global_var.fun() , keep global var
+					invoked_fun_name = node.func.value.id
+					global_var_modification = True
+					global_var_name = node.func.value.id
+					global_var_fun = node.func.attr
+					node.func = ast.Name()
+					node.func.id = "invoker"
+					global_var_op = ast.Constant()
+					#node.args = []
+				else: #file.fun()	keep fun()
+					invoked_fun_name = node.func.attr
+					node.func = ast.Name()
+					node.func.id = "invoker"
+			elif isinstance(node.func.value,ast.Subscript):
+				invoked_fun_name = node.func.value.value.id
+				global_var_modification = True	
+				global_var_subscript = True
+				subscript_index.append(node.func.value.slice.value)
+				global_var_name = node.func.value.value.id
+				global_var_fun = node.func.attr
+				global_var_slice = node.func.value.slice
+				node.func = ast.Name()
+				node.func.id = "invoker"
+
+		#Making the invoker dict
+		#invoked_du = get_invoked_du(invoked_fun_name)
+		invoked_du = "du_default"
+		#invoked_fun = get_invoked_fun(invoked_fun_name)
+		invoked_fun = invoked_fun_name
+		invoker_fun = actual_fun_fname
+
+		#logging.debug("			%s ==> invoker_%s",node.func.id,translated_functions[file+"."+invoked_fun_name])
+		arg_list = get_args_list(node)
+		kwargs_dict = get_kwargs_dict(node)
+
+		if file+"."+invoked_fun_name in aux_config_dict["pragmas"]["local"]: #si es local solo cambio nombre, no traduzco
+			logging.debug("%sThe function is local, therefore the invocation is not translated into invoker, is resolved locally",tabs)
+			node.func.id = translated_functions[file+"."+invoked_fun_name]
+			new_node = node
+			try:
+				new_node.func.id = translated_functions[file+"."+invoked_fun_name]
+			except:
+				new_node.func.value = translated_functions[file+"."+invoked_fun_name]
+			return
+
+		if file+"."+invoked_fun_name in aux_config_dict["pragmas"]["parallel"]: #si es paralela escribo el thread counter
+			parallel_invocation = True
+
+
+		if global_var_modification == True:
+			new_list = ast.List()
+			new_list.ctx = ast.Load()
+			new_list.elts = []
+			global_var_version = ast.Constant()
+			global_var_version.value = 0
+			global_var_version.kind = None
+			new_list.elts.append(global_var_version)
+			global_var_op = ast.Constant()
+			global_var_op.value = "."+global_var_fun
+			global_var_op.kind = None
+			new_list.elts.append(global_var_op)
+			for arg in node.args:
+				new_list.elts.append(arg)
+			arg_list = new_list
+
+		if global_var_subscript:
+			index_const = ast.Constant()
+			index_const.value = "index"
+			index_const.kind = None
+			kwargs_dict.keys.append(index_const)
+			list_index = ast.List()
+			list_index.ctx = ast.Load()
+			list_index.elts = []
+			for i in subscript_index:
+				list_index.elts.append(i)
+			kwargs_dict.values.append(list_index)
+
+
+		new_dict = ast.Dict()
+		new_dict.keys = []
+		new_dict.values = []
+		for i in (("invoked_du",invoked_du), ("invoked_function",invoked_fun), ("invoker_function",invoker_fun)):
+			##print(i)
+			new_key = ast.Constant()
+			new_key.value = i[0]#deberia ser invoked_du, fun y invokerfun
+			new_key.kind = None
+			new_value = ast.Constant()
+			new_value.value = i[1]
+			new_value.kind = None
+			new_dict.keys.append(new_key)
+			new_dict.values.append(new_value)
+		
+		#creo diccionario de parametros
+		params_dict = ast.Dict()
+		params_dict.keys = []
+		params_dict.values = []
+		#creo clave args que meto en el diccionario de parametros
+		new_key = ast.Constant()
+		new_key.value = "args"
+		new_key.kind = None
+		new_value = arg_list
+		params_dict.keys.append(new_key)
+		params_dict.values.append(new_value)
+		#todo, crear la key kwargs y meter el dict kwargs
+		new_key = ast.Constant()
+		new_key.value = "kwargs"
+		new_key.kind = None
+		new_value = kwargs_dict
+		params_dict.keys.append(new_key)
+		params_dict.values.append(new_value)
+		#Creo Campo params en el diccionario de la invocacion y lo meto
+		new_key = ast.Constant()
+		new_key.value = 'params'
+		new_key.kind = None
+		new_value = params_dict
+		new_dict.keys.append(new_key)
+		new_dict.values.append(new_value)
+
+		node.args = []
+		node.keywords = [] #las keywords van al kwargs que hay en args
+		node.args.append(new_dict)
+		node.func.id = 'invoker' 
+		'''new_node = ast.Call()
+		new_node.func = ast.Name()
+		new_node.func.ctx = ast.Load()
+		new_node.args = []
+		new_node.args.append(new_dict)
+		new_node.func.id = 'invoker'
+		new_node.keywords = [] '''
+
+		if global_var_modification:
+			node.func.id = old_node+" "*4*node.col_offset+'invoker'
+			#node.func.id = old_node+"\t"*node.col_offset+'invoker'
+		if parallel_invocation:
+			node.func.id = "invoker({'invoked_du': 'du_0', 'invoked_function': 'thread_counter', 'invoker_function': 'thread_counter', 'params': {'args': ['++'], 'kwargs': {}}})\n"+" "*4*node.col_offset+'invoker'
+		
+		logging.debug("%s	invoker function:  	 %s (%s)",tabs,actual_fun_name,actual_fun_fname)
+		logging.debug("%s	invoked function: 	 %s",tabs,invoked_fun)
+		logging.debug("%s	invoked du:		 	 %s",tabs,invoked_du)
+		logging.debug("%s	args:    		 	 %s",tabs,astunparse.unparse(arg_list).replace("\n",""))
+		logging.debug("%s	kwargs:	    	 	 %s",tabs,astunparse.unparse(kwargs_dict).replace("\n",""))
+		logging.debug("%s	global var:		 	 %s",tabs,global_var_modification)
+		logging.debug("%s	parallel invocation: %s",tabs,parallel_invocation)
+		logging.debug("%s	final invocation: 	 %s",tabs,astunparse.unparse(node).replace("\n",""))
+
+def add_nonblocking_inv(config_dict):
+	logging.debug(">>>Enter in translate nonblocking invocations")
+
+	global function_list
+	global nonblocking_invocations
+	global translated_functions
+	global function_list
+	global file
+	global nonblocking_function_invocations
+	global aux_config_dict
+	global actual_fun_name
+	global actual_fun_fname
+
+	function_list = config_dict["function_list"]
+	nonblocking_invocations = config_dict["nonblocking_invocations"]
+	translated_functions = config_dict["function_translated"]
+	function_list = config_dict["function_list"]
+	aux_config_dict = config_dict
+
+	for function in config_dict["program_data"]["functions"]:
+		#get invocations inside functions
+		file = function[:function.rfind(".")]
+		actual_fun_name = function
+		actual_fun_fname = translated_functions[function]
+		function_node = config_dict["program_data"]["functions"][function]
+		logging.debug("\n	Checking function %s: %s", function, actual_fun_fname)
+		Nonblocking_inv_scannner().visit(function_node)
+		logging.debug("		===All invocations obtained, now translating")
+		#print("\n Invocations nonblock:",nonblocking_function_invocations)
+		for invocation in nonblocking_function_invocations:
+			logging.debug("		Let's translate %s:	%s",invocation,astunparse.unparse(invocation).replace("\n",""))
+			RewriteNonblockingInvocationName().visit(invocation)
+		logging.debug("		===Translate global vars assignations as invocations:")
+		#RewriteAssginationsAsInvocations().visit(function_node)
+		ast.fix_missing_locations(function_node)
+		logging.debug("		===Invocations translated")
+		#logging.debug("		%s",astunparse.unparse(config_dict["program_data"]["functions"][function]))
+		nonblocking_function_invocations = []
+		#traduccion de declaracionde variables globales
+		#translateGlobalDeclaration(config_dict,file,function,function_node)
+	logging.debug("=======================")
+		

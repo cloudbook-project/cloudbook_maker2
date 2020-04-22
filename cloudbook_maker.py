@@ -204,6 +204,7 @@ config_dict = {
 			"agent0_only_du0": config_input["AGENT0_ONLY_DU0"],
 			"program_data": {},
 			"program_index": {},
+			"nonblocking_invocations":{},
 			"log_file_handler": logging.FileHandler('./cloudbook_maker.log', 'a')
 			} 
 

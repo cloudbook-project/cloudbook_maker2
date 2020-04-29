@@ -1013,7 +1013,7 @@ class Nonblocking_inv_scannner(ast.NodeVisitor):
 						logging.error("			ERROR: too many functions with same name")
 					else:
 						logging.debug("			Is not necessary to translate %s",node.func.id)
-		'''elif isinstance(node.func,ast.Attribute):
+		'''if isinstance(node.func,ast.Attribute):
 			logging.debug("		The invocation is ast.Attribute()")
 			if isinstance(node.func.value,ast.Attribute):
 				logging.error("			ERROR: more than one abstraction level on call, in progress")
@@ -1038,17 +1038,8 @@ class Nonblocking_inv_scannner(ast.NodeVisitor):
 					elif apparitions > 1:
 						logging.error("			ERROR: too many functions with same name")
 					else:
-						logging.debug("			Is not necessary to translate %s",node.func.value.id)
-			elif isinstance(node.func.value,ast.Subscript):
-				logging.debug("		The invocation attribute is ast.Subscript()")
-				#Es un elemento de diccionario o de una lista
-				logging.debug("		One level subscript %s",node.func.value.value.id)
-				if file+"."+node.func.value.value.id in function_list: #global_var[x].fun()
-					nonblocking_function_invocations.append(node)
-				else:
-					logging.error("		The subscript is not from global var in lineno %s", node.lineno)
-			else:
-				logging.error("		ERROR: Unknown type of invocation in %s",node.lineno)'''
+						logging.debug("			Is not necessary to translate %s",node.func.value.id)'''
+		
 
 
 class RewriteNonblockingInvocationName(ast.NodeTransformer):

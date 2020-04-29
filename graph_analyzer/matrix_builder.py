@@ -130,18 +130,36 @@ def get_program_info(config_dict):
 			else:
 				if nonblocking_inv and not remove_lines:
 					line_tabs = line.rstrip().count("\t")
-					new_line = "\t"*line_tabs+"nonblocking_inv_"+str(nonblocking_inv_index)+"_"+re.sub(r'\s','',line)+"#" #comment the original line, written in next if
-					source += new_line
-					###GET PRAGMA IN CONFIG DICT
-					invocation_fun = re.sub(r'\s','',line)
-					invocation_fun = invocation_fun[:invocation_fun.find("(")]
-					function_name = clean_file_name +"."+ invocation_fun
-					if function_name not in config_dict["nonblocking_invocations"]:
-						config_dict["nonblocking_invocations"][function_name]=[]
-					config_dict["nonblocking_invocations"][function_name].append("nonblocking_inv_"+str(nonblocking_inv_index)+"_"+invocation_fun)
-					###EXIT FROM GET PRAGMA IN CONFIG DICT
-					nonblocking_inv = False
-					nonblocking_inv_index += 1
+					if line.find(".") == -1:
+						new_line = "\t"*line_tabs+"nonblocking_inv_"+str(nonblocking_inv_index)+"_"+re.sub(r'\s','',line)+"#" #comment the original line, written in next if
+						source += new_line
+						###GET PRAGMA IN CONFIG DICT
+						invocation_fun = re.sub(r'\s','',line)
+						invocation_fun = invocation_fun[:invocation_fun.find("(")]
+						function_name = clean_file_name +"."+ invocation_fun
+						if function_name not in config_dict["nonblocking_invocations"]:
+							config_dict["nonblocking_invocations"][function_name]=[]
+						config_dict["nonblocking_invocations"][function_name].append("nonblocking_inv_"+str(nonblocking_inv_index)+"_"+invocation_fun)
+						###EXIT FROM GET PRAGMA IN CONFIG DICT
+						nonblocking_inv = False
+						nonblocking_inv_index += 1
+					else:
+						aux_line_pre = line[:line.rfind(".")+1]
+						aux_line_post = line[line.rfind(".")+1:]
+						aux_line_pre = re.sub(r'\s','',aux_line_pre)
+						aux_line_post = re.sub(r'\s','',aux_line_post)
+						new_line = "\t"*line_tabs+aux_line_pre+"nonblocking_inv_"+str(nonblocking_inv_index)+"_"+aux_line_post+"#" #comment the original line, written in next if
+						source += new_line
+						###GET PRAGMA IN CONFIG DICT
+						invocation_fun = aux_line_post
+						invocation_fun = invocation_fun[:invocation_fun.find("(")]
+						function_name = aux_line_pre + invocation_fun
+						if function_name not in config_dict["nonblocking_invocations"]:
+							config_dict["nonblocking_invocations"][function_name]=[]
+						config_dict["nonblocking_invocations"][function_name].append("nonblocking_inv_"+str(nonblocking_inv_index)+"_"+invocation_fun)
+						###EXIT FROM GET PRAGMA IN CONFIG DICT
+						nonblocking_inv = False
+						nonblocking_inv_index += 1
 				if not remove_lines:
 					source += line
 				else:
@@ -149,7 +167,8 @@ def get_program_info(config_dict):
 					source += "#"+line
 		
 		#file to test the source code in "source"
-		#ftest = open("codigonuevo.py","w")
+		#new_code_name = "codigonuevo"+clean_file_name+".py"
+		#ftest = open(new_code_name,"w")
 		#ftest.write(source)
 		#ftest.close()
 

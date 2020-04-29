@@ -993,6 +993,7 @@ class Nonblocking_inv_scannner(ast.NodeVisitor):
 		if isinstance(node.func, ast.Name):
 			logging.debug("		The invocation is ast.Name()")
 			if node.func.id.startswith("nonblocking_inv_",0):
+				logging.debug("			Is a nonblocking invocation")
 				invocation_name = re.sub(r'nonblocking_inv_\d+_','',node.func.id)
 				if file+"."+invocation_name in function_list: #invocacion tipo fun()
 					logging.debug("			The invocation %s is correctly in function list", file+"."+invocation_name)
@@ -1013,6 +1014,34 @@ class Nonblocking_inv_scannner(ast.NodeVisitor):
 						logging.error("			ERROR: too many functions with same name")
 					else:
 						logging.debug("			Is not necessary to translate %s",node.func.id)
+		if isinstance(node.func, ast.Attribute):
+			logging.debug("		The invocation is ast.Attribute()")
+			if isinstance(node.func.value,ast.Attribute):
+				logging.error("			ERROR: more than one abstraction level on call, in progress")
+			elif isinstance(node.func.value, ast.Name):
+				logging.debug("			The atrribute is ast.Name() %s",node.func.value.id)
+				if node.func.attr.startswith("nonblocking_inv_",0):
+					logging.debug("			Is a nonblocking invocation %s",node.func.attr)
+					invocation_name = re.sub(r'nonblocking_inv_\d+_','',node.func.attr)
+					#check if the function exists in other file and is only one
+					function_invoked_name = node.func.attr
+					aux_func_list = [] #function list without the complete path
+					for i in function_list:
+						aux_func_list.append(i[i.rfind(".")+1:len(i)])
+					apparitions = aux_func_list.count(invocation_name) #apparitions of function in program
+					if apparitions == 1:
+						#add complete_path_name
+						for i in function_list:
+							if i[i.rfind(".")+1:len(i)] == invocation_name:
+								logging.debug("			The invocation of imported function %s", i)
+								nonblocking_function_invocations.append(node)
+								break
+					elif apparitions > 1:
+						logging.error("			ERROR: too many functions with same name")
+				else:
+					logging.debug("			Is not necessary to translate %s",node.func.value.id)
+
+
 		'''if isinstance(node.func,ast.Attribute):
 			logging.debug("		The invocation is ast.Attribute()")
 			if isinstance(node.func.value,ast.Attribute):

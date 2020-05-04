@@ -23,9 +23,11 @@ nonblocking_function_invocations = []
 class invocation_scanner(ast.NodeVisitor):
 
 	def visit_Call(self, node):
+		#print(astunparse.unparse(node))
 		global function_invocations
 		global function_list
 		if isinstance(node.func, ast.Name):
+			#print("Translator:",node.func.id)
 			logging.debug("		The invocation is ast.Name()")
 			if file+"."+node.func.id in function_list: #invocacion tipo fun()
 				logging.debug("			The invocation %s is correctly in function list", file+"."+node.func.id)
@@ -479,6 +481,7 @@ def tranlateInvocations(config_dict):
 		actual_fun_fname = translated_functions[function]
 		function_node = config_dict["program_data"]["functions"][function]
 		logging.debug("\n	Checking function %s: %s", function, actual_fun_fname)
+		#print("Translator=>Buscamos invocaciones en:",function)
 		invocation_scanner().visit(function_node)
 		logging.debug("		===All invocations obtained, now translating")
 		for invocation in function_invocations:

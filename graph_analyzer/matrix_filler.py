@@ -16,8 +16,11 @@ global_variables = []
 class invocation_scanner(ast.NodeVisitor):
 
 	def visit_Call(self, node):
+		global invocation_list
+		#print(astunparse.unparse(node))
 		if isinstance(node.func,ast.Name):
 			#can be a name of function, or a result of an import like from x import *
+			#print("Scanner:",node.func.id)
 			if clean_file_name+node.func.id in function_list:#function name
 				invocation_list.append({"type":"fun","name": clean_file_name+node.func.id,"line": node.lineno, "offset":node.col_offset, "value": 1})
 			else:
@@ -79,9 +82,12 @@ class invocation_scanner(ast.NodeVisitor):
 
 	#for global variables assignation like "global_var = x" or "global_var += 1"
 	def visit_Assign(self, node):
+		if isinstance(node.value,ast.Call):#for x = invocation()
+			self.visit_Call(node.value)
 		for var in node.targets:
 			if isinstance(var,ast.Name):
 				if clean_file_name+var.id in function_list:
+					#print(astunparse.unparse(node))
 					invocation_list.append({"type":"global","name": clean_file_name+var.id,"line": node.lineno, "offset":node.col_offset, "value": 1})
 				#program_index[clean_file_name][node.lineno].append({"type":"assign","name":var.id,"value":var_value})
 			elif isinstance(var,ast.Tuple):
@@ -133,11 +139,14 @@ def get_invocations(config_dict):
 		#print("=======",i,"===========")
 		clean_file_name = i[:i.rfind(".")+1] #desde el principio, hasta el punto (punto incluido)
 		#print("================="+i+"====================")
-		tree = ast.parse(config_dict["program_data"]["functions"][i])
-		invocation_scanner().visit(tree)
+		#tree = ast.parse(config_dict["program_data"]["functions"][i])
+		function_node = config_dict["program_data"]["functions"][i]
+		#print("Scanner=>Buscamos invocaciones en:",i)
+		invocation_scanner().visit(function_node)
+		get_invocations_from_tree(function_node, 1, 1, invocation_list)
 		logging.debug("	The invocation scanner for file: %s is:	%s", i, invocation_list)
 		#get correct values of invocations
-		for j in invocation_list: #TODO: Quitar esto y hacerlo con visitas recursivas, es mucho mas sencillo
+		'''for j in invocation_list: #TODO: Quitar esto y hacerlo con visitas recursivas, es mucho mas sencillo
 			#if j["type"] == 'global':
 			#	continue
 			if j["type"] == 'loop':
@@ -151,7 +160,7 @@ def get_invocations(config_dict):
 					j["value"] = values[pos]
 			if j["line"] > last_loop and j["offset"] < last_offset:
 				pos = 0 if (pos==0) else pos-1
-				#pos -=1
+				#pos -=1'''
 		#create matrix column
 		n = 0
 		for j in invocation_list:
@@ -200,3 +209,49 @@ def get_files(input_folder, files_dict):
 				clean_file_name = f.replace("py","")
 			filenames.append(filename)
 	return filenames
+
+def get_invocations_from_tree(node, value, acc, invocation_list):
+	value = acc*value
+	for child in ast.iter_child_nodes(node):
+		if isinstance(child,ast.Call):
+			#print(child.lineno)
+			ind = check_invocation(child.lineno, invocation_list, "fun")
+			#print(ind)
+			if ind!=-1:
+				#print(invocation_list[ind],"=>",value, acc)
+				invocation_list[ind]["value"] = value
+			continue
+		elif isinstance(child,ast.Assign) or isinstance(child,ast.AugAssign):
+			ind = check_invocation(child.lineno, invocation_list, "assign")
+			#print(ind)
+			if ind!=-1:
+				#print(invocation_list[ind],"=>",value, acc)
+				invocation_list[ind]["value"] = value
+				continue
+			else:
+				get_invocations_from_tree(child,value,acc, invocation_list)	
+		elif isinstance(child,ast.For) or isinstance(child,ast.While):
+			acc = 100
+			get_invocations_from_tree(child,value,acc, invocation_list)
+		else:
+			acc = 1
+			#tener en cuenta las asignaciones, solo de globales
+			get_invocations_from_tree(child, value, acc, invocation_list)
+
+def check_invocation(invocation_lineno,invocation_list,check_type):
+	if check_type == "fun":
+		for ni,i in enumerate(invocation_list):
+			#print("=>",ni,i)
+			if invocation_list[ni]["type"]=="fun" and invocation_list[ni]["line"]==invocation_lineno:
+				return ni
+			else:
+				continue
+		return -1
+	elif check_type == "assign":
+		for ni,i in enumerate(invocation_list):
+			#print("=>",ni,i)
+			if invocation_list[ni]["type"]=="global" and invocation_list[ni]["line"]==invocation_lineno:
+				return ni
+			else:
+				continue
+		return -1

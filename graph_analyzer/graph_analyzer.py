@@ -32,6 +32,7 @@ def graph_filler(config_dict):
 	logging.debug(">>>Enter in graph filler")
 	indent_log(config_dict["log_file_handler"],2)
 	matrix_filler.get_invocations(config_dict)
+	log_results_filler(config_dict)
 	matrix_cleaner.clean_matrix(config_dict)
 	indent_log(config_dict["log_file_handler"],1)
 	log_results_filler(config_dict)

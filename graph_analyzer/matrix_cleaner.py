@@ -58,12 +58,13 @@ def clean_matrix(config_dict):
 				pass
 			else:
 				rows_to_clean.append(i)
-	for row in rows_to_clean:
-		matrix =remove_row(matrix, row)
+	logging.info("Rows to remove %s",rows_to_clean)
+	matrix = remove_rows(matrix,rows_to_clean)
 	config_dict["matrix"] = matrix
 	logging.info("<<<Exit from clean matrix")
 
 def remove_row(matrix, row_to_clean):
+	logging.info("	>>>Enter in remove row")
 	#print "cleaning row ", row_to_clean
 	num_cols=len(matrix[0])
 	num_rows=len(matrix)
@@ -83,6 +84,7 @@ def remove_row(matrix, row_to_clean):
 
 	matrix=matrix_new2
 	##print_matrix(matrix)
+	logging.info("	<<<Exit from remove row")
 	return matrix
 
 def print_matrix(matrix):
@@ -91,3 +93,26 @@ def print_matrix(matrix):
 	for i in range(0,num_rows):
 		print (matrix[i])
 
+def remove_rows(matrix, rows_to_clean):
+	logging.info("	>>>Enter in remove row")
+	#print "cleaning row ", row_to_clean
+	num_cols=len(matrix[0])
+	num_rows=len(matrix)
+	matrix_new2= [[None] * (num_cols-len(rows_to_clean)) for i in range(num_rows-len(rows_to_clean))]
+	row2=0
+	col2=0
+	for i in range(0,num_rows):
+		if (i in rows_to_clean):
+			continue
+		for j in range(0,num_cols):
+			if (j in rows_to_clean):
+				continue
+			matrix_new2[row2][col2]=matrix[i][j]
+			col2+=1
+		row2+=1
+		col2=0
+
+	matrix=matrix_new2
+	##print_matrix(matrix)
+	logging.info("	<<<Exit from remove row")
+	return matrix

@@ -1,6 +1,6 @@
 import logging
 
-def clean_matrix(config_dict):
+def clean_matrix_old(config_dict):
 	logging.info(">>>Enter in clean matrix")
 	matrix = config_dict["matrix"]
 	clean=False
@@ -40,6 +40,27 @@ def clean_matrix(config_dict):
 	config_dict["matrix"] = matrix
 	#print_matrix(config_dict["matrix"])
 	#return matrix
+	logging.info("<<<Exit from clean matrix")
+
+def clean_matrix(config_dict):
+	logging.info(">>>Enter in clean matrix")
+	matrix = config_dict["matrix"]
+	clean=False
+	num_rows=len(matrix)
+	num_cols=len(matrix[0])
+	rows_to_clean = []
+	for i in range(1,num_rows):
+		suma = 0
+		for j in range(1,num_cols):
+			suma+=matrix[i][j]
+		if suma == 0:
+			if config_dict["matrix"][i][0] == config_dict["pragmas"]["main"]:
+				pass
+			else:
+				rows_to_clean.append(i)
+	for row in rows_to_clean:
+		matrix =remove_row(matrix, row)
+	config_dict["matrix"] = matrix
 	logging.info("<<<Exit from clean matrix")
 
 def remove_row(matrix, row_to_clean):

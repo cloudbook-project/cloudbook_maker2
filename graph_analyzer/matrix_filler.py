@@ -63,53 +63,6 @@ class invocation_scanner(ast.NodeVisitor):
 
 		self.generic_visit(node)
 
-	'''def visit_For(self, node):
-		#print("for", node.lineno, node.col_offset)
-		invocation_list.append({"type":"loop", "line":node.lineno, "offset": node.col_offset})
-		self.generic_visit(node)
-
-	def visit_While(self, node):
-		#print("while", node.lineno, node.col_offset)
-		invocation_list.append({"type":"loop", "line":node.lineno, "offset": node.col_offset})
-		self.generic_visit(node)
-
-	def visit_Global(self,node):
-		#print("global", node.lineno, node.col_offset, node.names)
-		for i in node.names:
-			if clean_file_name+i in function_list:
-				invocation_list.append({"type":"global","name": clean_file_name+i,"line": node.lineno, "offset":node.col_offset, "value": 1})
-		self.generic_visit(node)
-
-	#for global variables assignation like "global_var = x" or "global_var += 1"
-	def visit_Assign(self, node):
-		for var in node.targets:
-			if isinstance(var,ast.Name):
-				if clean_file_name+var.id in function_list:
-					#print(astunparse.unparse(node))
-					invocation_list.append({"type":"global","name": clean_file_name+var.id,"line": node.lineno, "offset":node.col_offset, "value": 1})
-				#program_index[clean_file_name][node.lineno].append({"type":"assign","name":var.id,"value":var_value})
-			elif isinstance(var,ast.Tuple):
-				for i in var.elts:
-					if clean_file_name+i.id in function_list:
-						invocation_list.append({"type":"global","name": clean_file_name+i.id,"line": node.lineno, "offset":node.col_offset, "value": 1})
-					#program_index[clean_file_name][node.lineno].append({"type":"assign","name":i.id,"value":var_value})
-			elif isinstance(var,ast.Subscript):
-				if isinstance(var.value,ast.Name):
-					if clean_file_name+var.value.id in function_list:
-						invocation_list.append({"type":"global","name": clean_file_name+var.value.id,"line": node.lineno, "offset":node.col_offset, "value": 1})
-				else:
-					logging.error("ERROR left part of subscript assignation %s not included in line %s", type(var), node.lineno)
-			else:
-				#print("Tipo de parte izquierda",type(var),"de asignacion no comprendido en el fichero tal, en la linea",node.lineno)
-				logging.error("ERROR left part of assignation %s not included in line %s", type(var), node.lineno)
-
-	def visit_AugAssign(self, node):
-		if isinstance(node.target,ast.Name):
-			if clean_file_name+node.target.id in function_list:
-				invocation_list.append({"type":"global","name": clean_file_name+node.target.id,"line": node.lineno, "offset":node.col_offset, "value": 1})
-		else:
-			logging.error("ERROR left part of augmented assgination not included in line %s", node.lineno)'''
-
 class invocation_scanner_extra(ast.NodeVisitor):
 
 	def visit_For(self, node):

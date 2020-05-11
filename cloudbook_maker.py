@@ -179,6 +179,7 @@ config_dict = {
 			"global_vars": {},
 			"imports": {},
 			"critical_dus" : [],
+			"max_threads": config_input["CLOUDBOOK_MAXTHREADS"],
 			"non-reliable_agent_mode": config_input["NON-RELIABLE_AGENT_MODE"],
 			"agent0_only_du0": config_input["AGENT0_ONLY_DU0"],
 			"program_data": {},

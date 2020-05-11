@@ -79,6 +79,7 @@ def log_results_builder(config_dict):
 	logging.info("Global_vars 			  :	%s",config_dict["global_vars"])
 	logging.info("Imports      			  :	%s",config_dict["imports"])
 	logging.info("Nonblocking Invocations :	%s",config_dict["nonblocking_invocations"])
+	logging.info("Max threads for all agents :	%s",config_dict["max_threads"])
 	logging.info('Program_index:')
 	log_program_index(config_dict)
 

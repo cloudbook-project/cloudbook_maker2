@@ -593,8 +593,18 @@ def create_global_declaration_node(global_var,actual_fun_name,actual_fun_fname, 
 	#print("fun_dest",fun_dest)
 	
 	#invocation_params = "{'invoked_du':\'"+ du_dest+"\','invoked_function':\'"+fun_dest+"\','invoker_function':\'"+ actual_fun_fname+"\','params': {'args':["+'''str('''+actual_fun_fname+'''.ver_'''+global_var+'''),"None"'''+"],'kwargs':{}}}"
-	invocation_params = "{'invoked_du':\'"+ du_dest+"\','invoked_function':\'"+fun_dest+"\','invoker_function':\'"+ actual_fun_fname+"\','params': {'args':["+''+actual_fun_fname+'''.ver_'''+global_var+''',"None"'''+"],'kwargs':{}}}"
-
+	#invocation_params = "{'invoked_du':\'"+ du_dest+"\','invoked_function':\'"+fun_dest+"\','invoker_function':\'"+ actual_fun_fname+"\','params': {'args':["+''+actual_fun_fname+'''.ver_'''+global_var+''',"None"'''+"],'kwargs':{}}}"
+	#get if actual fun fname is parallel or nonblocking
+	#thi is made after create invocation_paramas dict, therefore the stadistics are correct, indicates f0 as invoker instead of parallel_f0
+	old_fun_fname = actual_fun_fname
+	for fun in config_dict["function_translated"]:
+		if config_dict["function_translated"][fun] == actual_fun_fname:
+			orig_actual_fun = fun
+	if orig_actual_fun in config_dict["pragmas"]["parallel"]:
+		actual_fun_fname = "parallel_"+actual_fun_fname
+	if orig_actual_fun in config_dict["pragmas"]["nonblocking_def"]:
+		actual_fun_fname = "nonblocking_"+actual_fun_fname
+	invocation_params = "{'invoked_du':\'"+ du_dest+"\','invoked_function':\'"+fun_dest+"\','invoker_function':\'"+ old_fun_fname+"\','params': {'args':["+''+actual_fun_fname+'''.ver_'''+global_var+''',"None"'''+"],'kwargs':{}}}"
 	code = '''
 if not hasattr('''+actual_fun_fname+''', '''+'"'+global_var+'"'+'''):
 	'''+actual_fun_fname+"."+global_var+''' = None

@@ -393,6 +393,7 @@ def noblocking_invocations_thread_launcher(config_dict, file):
 def noblocking_invocations_target_code(config_dict,file):
 	logging.debug(">>> Writting nonblocking target_code")
 	for function in config_dict["nonblocking_invocations"]:
-		new_function = config_dict["program_data"]["functions"][function]
+		#new_function = config_dict["program_data"]["functions"][function]
+		new_function = config_dict["nonblocking_inv_nodes"][function]
 		new_function.name = "nonblocking_inv_"+ config_dict["program_data"]["functions"][function].name
 		file.write(astunparse.unparse(new_function))

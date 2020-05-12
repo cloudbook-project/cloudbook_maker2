@@ -51,6 +51,8 @@ def split_program(config_dict):
 	translator.add_thread_counter_minus(config_dict)
 	#write nonblocking invocations
 	translator.add_nonblocking_inv(config_dict)
+	#create nonblocking invocation functions
+	translator.translate_nonblocking_functions(config_dict)
 	#write the dus
 	#por cada du, miro imports (meto todos menos los de la antigua forma), miro cada funcion
 	#veo si hay etiquetas y trato las invocaciones

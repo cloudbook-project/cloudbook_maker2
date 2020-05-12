@@ -600,6 +600,8 @@ def create_global_declaration_node(global_var,actual_fun_name,actual_fun_fname, 
 	for fun in config_dict["function_translated"]:
 		if config_dict["function_translated"][fun] == actual_fun_fname:
 			orig_actual_fun = fun
+		else:#OJO esto es para las nonblocking invocations, que actual_fun_fname ya viene cambiado porque no se puede saber que invocacion es
+			orig_actual_fun = ""
 	if orig_actual_fun in config_dict["pragmas"]["parallel"]:
 		actual_fun_fname = "parallel_"+actual_fun_fname
 	if orig_actual_fun in config_dict["pragmas"]["nonblocking_def"]:
@@ -1296,3 +1298,142 @@ def add_nonblocking_inv(config_dict):
 		#translateGlobalDeclaration(config_dict,file,function,function_node)
 	logging.debug("=======================")
 		
+
+def translateInvocationsNBF(config_dict):
+	logging.debug(">>>Enter in translate invocations for nonblocking invoked functions")
+	global translated_functions
+	global function_list
+	global file
+	global function_invocations
+	global aux_config_dict
+	global actual_fun_name
+	global actual_fun_fname
+
+	translated_functions = config_dict["function_translated"]
+	function_list = config_dict["function_list"]
+	aux_config_dict = config_dict
+
+	for function in config_dict["nonblocking_inv_nodes"]:
+		#get invocations inside functions
+		file = function[:function.rfind(".")]
+		actual_fun_name = function
+		actual_fun_fname = translated_functions[function]
+		#function_node = config_dict["program_data"]["functions"][function]
+		function_node = config_dict["nonblocking_inv_nodes"][function]
+		logging.debug("\n	Checking function %s: %s", function, actual_fun_fname)
+		#print("Translator=>Buscamos invocaciones en:",function)
+		invocation_scanner().visit(function_node)
+		logging.debug("		===All invocations obtained, now translating")
+		for invocation in function_invocations:
+			logging.debug("		Let's translate %s:	%s",invocation,astunparse.unparse(invocation).replace("\n",""))
+			RewriteInvocationName().visit(invocation)
+		logging.debug("		===Translate global vars assignations as invocations:")
+		RewriteAssginationsAsInvocations().visit(function_node)
+		ast.fix_missing_locations(function_node)
+		logging.debug("		===Invocations translated")
+		#logging.debug("		%s",astunparse.unparse(config_dict["program_data"]["functions"][function]))
+		function_invocations = []
+		#traduccion de declaracionde variables globales
+		translateGlobalDeclarationNBF(config_dict,file,function,function_node)
+	logging.debug("=======================")
+
+def add_nonblocking_invNBF(config_dict):
+	logging.debug(">>>Enter in translate nonblocking invocations")
+
+	global function_list
+	global nonblocking_invocations
+	global translated_functions
+	global function_list
+	global file
+	global nonblocking_function_invocations
+	global aux_config_dict
+	global actual_fun_name
+	global actual_fun_fname
+
+	function_list = config_dict["function_list"]
+	nonblocking_invocations = config_dict["nonblocking_invocations"]
+	translated_functions = config_dict["function_translated"]
+	function_list = config_dict["function_list"]
+	aux_config_dict = config_dict
+
+	for function in config_dict["nonblocking_inv_nodes"]:
+		#get invocations inside functions
+		file = function[:function.rfind(".")]
+		actual_fun_name = function
+		actual_fun_fname = translated_functions[function]
+		function_node = config_dict["nonblocking_inv_nodes"][function]
+		logging.debug("\n	Checking function %s: %s", function, actual_fun_fname)
+		Nonblocking_inv_scannner().visit(function_node)
+		logging.debug("		===All invocations obtained, now translating")
+		#print("\n Invocations nonblock:",nonblocking_function_invocations)
+		for invocation in nonblocking_function_invocations:
+			logging.debug("		Let's translate %s:	%s",invocation,astunparse.unparse(invocation).replace("\n",""))
+			RewriteNonblockingInvocationName().visit(invocation)
+		logging.debug("		===Translate global vars assignations as invocations:")
+		#RewriteAssginationsAsInvocations().visit(function_node)
+		ast.fix_missing_locations(function_node)
+		logging.debug("		===Invocations translated")
+		#logging.debug("		%s",astunparse.unparse(config_dict["program_data"]["functions"][function]))
+		nonblocking_function_invocations = []
+		#traduccion de declaracionde variables globales
+		#translateGlobalDeclaration(config_dict,file,function,function_node)
+	logging.debug("=======================")
+
+def translateGlobalDeclarationNBF(config_dict,file,function,function_node):
+	global actual_fun_name
+	global actual_fun_fname
+	global translated_functions
+	global du_dest
+	global fun_dest
+	global aux_config_dict
+
+	aux_config_dict = config_dict
+
+	actual_fun_name = function
+	actual_fun_fname = translated_functions[function]
+	actual_fun_fname = "nonblocking_inv_"+actual_fun_fname
+	#guardamos el nombre de la funcion acualen la que estamos y hacemos el visit
+	logging.debug("		===Let's translate global declarations/refresh: global global_var")
+	RewriteGlobalDeclaration().visit(function_node)
+
+def translateReturnsNBF(config_dict):
+	logging.debug("<<<Enter in translate returns")
+	global function_list
+	global file
+	global aux_config_dict
+	global return_fun
+
+	function_list = config_dict["function_list"]
+	aux_config_dict = config_dict
+
+	return_fun = False
+	return_node = ast.Return()
+	return_node.value = ast.Call()
+	return_node.value.func = ast.Attribute()
+	return_node.value.args = []
+	return_node.value.keywords = []
+	return_node.value.func.value = ast.Name()
+	return_node.value.func.value.id = 'json'
+	return_node.value.func.value.ctx = ast.Load()
+	return_node.value.func.attr = 'dumps'
+	return_node.value.func.ctx = ast.Load()
+
+	for function in config_dict["nonblocking_inv_nodes"]:
+		#get invocations inside functions
+		file = function[:function.rfind(".")]
+		function_node = config_dict["nonblocking_inv_nodes"][function]
+		logging.debug("	Checking function %s", function)
+		#logging.debug("		",ast.dump(function_node))
+		visitReturn().visit(function_node)
+		if return_fun:
+			RewriteReturnValue().visit(function_node)
+		else:
+			AddReturnValue().visit(function_node)
+		logging.debug("	Returns changed/added")
+		return_fun = False
+	logging.debug("=======================")
+
+def translate_nonblocking_functions(config_dict):
+	translateInvocationsNBF(config_dict)
+	add_nonblocking_invNBF(config_dict)
+	translateReturnsNBF(config_dict)

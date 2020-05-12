@@ -191,6 +191,9 @@ def get_program_info(config_dict):
 	config_dict["program_data"]["classes"] = class_nodes
 	config_dict["program_index"] = program_index
 	config_dict["imports"] = import_dict
+	#nonblocking invocations node
+	for i in config_dict["nonblocking_invocations"]:
+		config_dict["nonblocking_inv_nodes"][i] = function_nodes[i]
 	#Max threads value
 	config_dict["max_threads"] = config_dict["max_threads"] * config_dict["num_dus"] if not config_dict["agent0_only_du0"] else config_dict["max_threads"] * (config_dict["num_dus"]-1)
 	#logging.debug('Program_index:')

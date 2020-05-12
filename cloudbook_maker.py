@@ -185,6 +185,7 @@ config_dict = {
 			"program_data": {},
 			"program_index": {},
 			"nonblocking_invocations":{},
+			"nonblocking_inv_nodes":{},
 			"log_file_handler": logging.FileHandler('./cloudbook_maker.log', 'a')
 			} 
 

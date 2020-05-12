@@ -79,7 +79,7 @@ def create_du(du_name,config_dict):
 			function_args = astunparse.unparse(config_dict["program_data"]["functions"][function].args).replace("\n","")
 			function_args_node = config_dict["program_data"]["functions"][function].args
 			function_def = "\ndef "+function_name+"("+function_args+"):"
-			function_body = function_body_text(function_name, function_args, function_args_node)
+			function_body = function_body_text(config_dict, function_name, function_args, function_args_node)
 			f.write(function_def+function_body)
 			#renombro la parallel por parallel_fx
 			translator.translateParallelFunctionName(config_dict["program_data"]["functions"][function])
@@ -90,7 +90,7 @@ def create_du(du_name,config_dict):
 			function_args = astunparse.unparse(config_dict["program_data"]["functions"][function].args).replace("\n","")
 			function_args_node = config_dict["program_data"]["functions"][function].args
 			function_def = "\ndef "+function_name+"("+function_args+"):"
-			function_body = function_body_text(function_name, function_args, function_args_node, "nonblocking")
+			function_body = function_body_text(config_dict, function_name, function_args, function_args_node, "nonblocking")
 			f.write(function_def+function_body)
 			#renombro la parallel por parallel_fx
 			translator.translateNonBlockingDefFunctionName(config_dict["program_data"]["functions"][function])
@@ -114,7 +114,7 @@ def main():
 	return '''+translated_functions[config_dict["pragmas"]["main"]]+"()"+'''
 \n'''
 
-def function_body_text(function_name, function_args, function_args_node, function_type = "parallel"): #Es necesario el return?
+def function_body_text(config_dict, function_name, function_args, function_args_node, function_type = "parallel"): #Es necesario el return?
 	#func_args = function_args.vararg
 	#func_args = astunparse.unparse(func_args)
 	#func_kwargs = function_args.kwarg
@@ -160,7 +160,26 @@ def function_body_text(function_name, function_args, function_args_node, functio
 		target_name = "nonblocking_" + function_name
 	elif function_type == "nonblocking_inv":
 		target_name = "nonblocking_inv_" + function_name
-	return '''
+	if function_type == "parallel" and config_dict["max_threads"] == 0:
+		return '''
+	'''+thread_name+''' = threading.Thread(target= '''+target_name+''', daemon = False, args = ['''+function_args3+'''], kwargs='''+kwargs_dict2+''')
+	'''+thread_name+'''.start()
+	return json.dumps("cloudbook: thread launched")
+'''
+	elif function_type == "parallel" and config_dict["max_threads"] != 0:
+		return '''
+	'''+thread_name+''' = threading.Thread(target= '''+target_name+''', daemon = False, args = ['''+function_args3+'''], kwargs='''+kwargs_dict2+''')
+	invoker_dict = {'invoked_du':'du_0', 'invoked_function': 'thread_counter', 'invoker_function': 'thread_counter', 'params': {'args': [''], 'kwargs': {}}}
+	launch = False
+	while launch == False:
+		live_threads = invoker(invoker_dict)
+		if live_threads % '''+str(config_dict["max_threads"])+''' != 0:
+			'''+thread_name+'''.start()
+			launch = True
+	return json.dumps("cloudbook: thread launched")
+'''
+	else:
+		return '''
 	'''+thread_name+''' = threading.Thread(target= '''+target_name+''', daemon = False, args = ['''+function_args3+'''], kwargs='''+kwargs_dict2+''')
 	'''+thread_name+'''.start()
 	return json.dumps("cloudbook: thread launched")
@@ -367,7 +386,7 @@ def noblocking_invocations_thread_launcher(config_dict, file):
 			function_args = astunparse.unparse(config_dict["program_data"]["functions"][function].args).replace("\n","")
 			function_args_node = config_dict["program_data"]["functions"][function].args
 			function_def = "\ndef "+invocation+"("+function_args+"):"
-			function_body = function_body_text(function_name, function_args, function_args_node, "nonblocking_inv")
+			function_body = function_body_text(config_dict,function_name, function_args, function_args_node, "nonblocking_inv")
 			file.write(function_def+function_body)
 	#escribo la funcion con nombre normal
 

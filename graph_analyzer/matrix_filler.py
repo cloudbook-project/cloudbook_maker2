@@ -112,6 +112,56 @@ class invocation_scanner_extra(ast.NodeVisitor):
 		else:
 			logging.error("ERROR left part of augmented assgination not included in line %s", node.lineno)
 
+class invocation_scanner_nonblocking_inv(ast.NodeVisitor):
+
+	def visit_Call(self, node):
+		global invocation_list
+		if isinstance(node.func, ast.Name):
+			if node.func.id.startswith("nonblocking_inv_",0):
+				invocation_name = re.sub(r'nonblocking_inv_\d+_','',node.func.id)
+				if clean_file_name+invocation_name in function_list: #invocacion tipo fun()
+					invocation_list.append({"type":"fun","name": clean_file_name+invocation_name,"line": node.lineno, "offset":node.col_offset, "value": 1})
+				else: #esta la fun en otro fichero
+					aux_func_list = [] #function list without the complete path
+					for i in function_list:
+						aux_func_list.append(i[i.rfind(".")+1:len(i)])
+					apparitions = aux_func_list.count(invocation_name) #apparitions of function in program
+					if apparitions == 1:
+						#add complete_path_name
+						for i in function_list:
+							if i[i.rfind(".")+1:len(i)] == invocation_name:
+								invocation_list.append({"type":"fun","name": i,"line": node.lineno, "offset":node.col_offset, "value": 1})
+								break
+					elif apparitions > 1:
+						logging.error("			ERROR: too many functions with same name")
+		
+		if isinstance(node.func, ast.Attribute):
+			if isinstance(node.func.value,ast.Attribute):
+				logging.error("			ERROR: more than one abstraction level on call, in progress")
+			elif isinstance(node.func.value, ast.Name):
+				if node.func.attr.startswith("nonblocking_inv_",0):
+					invocation_name = re.sub(r'nonblocking_inv_\d+_','',node.func.attr)
+					#check if the function exists in other file and is only one
+					function_invoked_name = node.func.attr
+					aux_func_list = [] #function list without the complete path
+					for i in function_list:
+						aux_func_list.append(i[i.rfind(".")+1:len(i)])
+					apparitions = aux_func_list.count(invocation_name) #apparitions of function in program
+					if apparitions == 1:
+						#add complete_path_name
+						for i in function_list:
+							if i[i.rfind(".")+1:len(i)] == invocation_name:
+								logging.debug("			The invocation of imported function %s", i)
+								#nonblocking_function_invocations.append(node)
+								invocation_list.append({"type":"fun","name": i,"line": node.lineno, "offset":node.col_offset, "value": 1})
+								break
+					elif apparitions > 1:
+						logging.error("			ERROR: too many functions with same name")
+				#else:
+				#	logging.debug("			Is not necessary to translate %s",node.func.value.id)
+		self.generic_visit(node)
+
+
 def get_invocations(config_dict):
 	global function_list
 	global clean_file_name
@@ -144,6 +194,7 @@ def get_invocations(config_dict):
 		#print("Scanner=>Buscamos invocaciones en:",i)
 		invocation_scanner().visit(function_node)
 		invocation_scanner_extra().visit(function_node)
+		invocation_scanner_nonblocking_inv().visit(function_node)
 		get_invocations_from_tree(function_node, 1, 1, invocation_list)
 		logging.debug("	The invocation scanner for file: %s is:	%s", i, invocation_list)
 		#get correct values of invocations

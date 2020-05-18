@@ -31,7 +31,7 @@ def split_program(config_dict):
 	if config_dict["input_matrix"] != "":
 		config_dict["matrix"] = config_dict["input_matrix"]
 	iterator.iterate(config_dict)
-	##log_results_filler(config_dict)
+	log_results_filler(config_dict)
 	#Save collapsed matrix
 	##out_route =  config_dict["distributed_dir"] + os.sep + "matrix" + os.sep + "matrix.json"
 	##file = open(out_route,"w")

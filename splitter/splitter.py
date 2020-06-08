@@ -31,6 +31,10 @@ def split_program(config_dict):
 	##iterator.iterate(config_dict)
 	if config_dict["input_matrix"] != "":
 		config_dict["matrix"] = config_dict["input_matrix"]
+		#Rename original matrix
+		old_matrix_route =  config_dict["distributed_dir"] + os.sep + "matrix" + os.sep + "matrix.json"
+		new_matrix_route =  config_dict["distributed_dir"] + os.sep + "matrix" + os.sep + "original_matrix.json"
+		os.rename(old_matrix_route,new_matrix_route)
 		#Save collapsed matrix
 		matrix_str = json.dumps(config_dict["matrix"])
 		out_route =  config_dict["distributed_dir"] + os.sep + "matrix" + os.sep + "matrix.json"

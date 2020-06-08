@@ -1,6 +1,7 @@
 import logging
 import os
 import sys
+import json
 
 from . import iterator
 from . import translator
@@ -30,6 +31,12 @@ def split_program(config_dict):
 	##iterator.iterate(config_dict)
 	if config_dict["input_matrix"] != "":
 		config_dict["matrix"] = config_dict["input_matrix"]
+		#Save collapsed matrix
+		matrix_str = json.dumps(config_dict["matrix"])
+		out_route =  config_dict["distributed_dir"] + os.sep + "matrix" + os.sep + "matrix.json"
+		file = open(out_route,"w")
+		file.write(matrix_str)
+		file.close()
 	iterator.iterate(config_dict)
 	log_results_filler(config_dict)
 	#Save collapsed matrix

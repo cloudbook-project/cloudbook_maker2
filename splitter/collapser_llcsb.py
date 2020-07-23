@@ -21,8 +21,13 @@ def choose_functions_to_collapse (matrix):
 		for j in range(1,num_cols):
 			# self-invocation is not relevant
 			if (i!=j) and (matrix[i][j] >= max_invocations):
+				if isinstance(matrix[0][j],str):
+					len_matrix = len(list(matrix[0][j].split()))
+				else:
+					len_matrix = len(matrix[0][j])
 				if (matrix[i][j] == max_invocations):
-					if (len(matrix[0][j])>len_collapsable):
+					#if (len(matrix[0][j])>len_collapsable):
+					if (len_matrix>len_collapsable):
 						continue
 
 				# best candidate selection
@@ -31,7 +36,7 @@ def choose_functions_to_collapse (matrix):
 				f1_col=j # f1 invocation column is the column
 				f1_row=f1_col
 				f2_row=f2_col
-				len_collapsable =len(matrix[0][j])
+				len_collapsable =len_matrix #len(matrix[0][j])
 	logging.debug("		Functions to collapse: %s,%s",f2_col,f1_col)
 	return (f2_col,f1_col)
 
